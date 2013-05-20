@@ -26,7 +26,7 @@ public class Main extends BasicGame {
      * Future States Needed
      *
      *  2 - Match Results
-    */
+     */
 
     //0 - off 1 - human 2 - CPU
     private int playerType[] = {1,2,0,0};
@@ -63,14 +63,9 @@ public class Main extends BasicGame {
     private Sound explosion, bombup, fireup;
     private Music bombsong;
 
-    private Player whiteBomber, blackBomber, redBomber, blueBomber;
+    public Player whiteBomber, blackBomber, redBomber, blueBomber;
 
     public static MersenneTwisterFast mt = new MersenneTwisterFast();
-
-    public int[][] board = new int[19][15];
-    public int[][] players = new int[19][15];
-    public Bomb[][] bombs = new Bomb[19][15];
-    public Fire[][] fire = new Fire[19][15];
 
     public SpriteSheet tileset;
     public SpriteSheet bombImage;
@@ -78,19 +73,18 @@ public class Main extends BasicGame {
     
     private Input input;
     private boolean changingOptions = false;
+    
+    public Map theMap;
 
-    public Main()
-    {
+    public Main() {
         //Changed from jbomber to avoid confusion with other projects.
         //Will most likely redo title graphic to reflect this change in an
         //upcoming revision.
-        super("javaBomber");
+        super("My Bomber");
     }
     
-    public static void main(String[] arguments)
-    {
-        try
-        {
+    public static void main(String[] arguments) {
+        try {
             AppGameContainer app = new AppGameContainer(new Main());
             app.setDisplayMode(640, 480, false);
             app.setShowFPS(false);
@@ -99,8 +93,7 @@ public class Main extends BasicGame {
             app.setFullscreen(false);
             app.start();
         }
-        catch (SlickException e)
-        {
+        catch (SlickException e) {
             e.printStackTrace();
         }
     }
@@ -109,7 +102,7 @@ public class Main extends BasicGame {
     public void init(GameContainer container) throws SlickException
     {
         //Load AI engine
-        playerAI = new PlayerAI();
+        playerAI = new SimpleAI();
         //Menu Graphics Loading
         title = new Image("data/menu/title.png");
         playButton = new Image("data/menu/button_play.png");
@@ -148,8 +141,7 @@ public class Main extends BasicGame {
         p4 = new Rectangle(430, 220, 100, 50);
         
         //Music Loading
-        if (musicOn)
-        {
+        if (musicOn) {
             bombsong = new Music("data/bombsong.ogg");
             bombsong.loop();
         }
@@ -161,12 +153,10 @@ public class Main extends BasicGame {
     @Override
     public void update(GameContainer container, int delta) throws SlickException
     {
-        if (gameState == 0)
-        {
+        if (gameState == 0) {
             checkInputMenu(container);
         }
-        if (gameState == 1)
-        {
+        if (gameState == 1) {
             checkInputGame(container);
             //Check on all the bombs
             checkBombs();
@@ -186,24 +176,25 @@ public class Main extends BasicGame {
             checkShake();
             //Update the fog effect
             fogX += -0.3f;
-            if (fogX < -640)
-            {
-                fogX = 0;
-            }
+            if (fogX < -640) { fogX = 0; }
         }
     }
 
-    public void render(GameContainer container, Graphics g) throws SlickException
-    {
-        if (gameState == 0)
-        {
+    /**
+     *
+     * @param container
+     * @param g
+     * @throws SlickException
+     */
+    @Override
+    public void render(GameContainer container, Graphics g) throws SlickException {
+        if (gameState == 0) {
             drawMenuBackground(g);
             drawMenuButtons(g);
             g.drawImage(title, 50, 0);
         }
-        if (gameState == 1)
-        {
-            drawTiles(g);
+        if (gameState == 1) {
+            theMap.draw(this);
             drawFire(g);
             whiteBomber.draw(g, this);
             blackBomber.draw(g, this);
@@ -425,56 +416,10 @@ public class Main extends BasicGame {
         }
     }
 
-    private void newRound(int[] playerType)
-    {
-        board = new int[19][15];
-        players = new int[19][15];
-        bombs = new Bomb[19][15];
-        fire = new Fire[19][15];
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                board[x][y] = 1;
-            }
-        }
-        for (int x = 1; x < 18; x++)
-        {
-            for (int y = 1; y < 14; y++)
-            {
-                if (x % 2 == 0 && y % 2 == 0)
-                {
-                    board[x][y] = 1;
-                }
-                else
-                {
-                    board[x][y] = 0;
-                }
-            }
-        }
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                if (board[x][y] != 1 && mt.nextInt(5) > 1)
-                {
-                    board[x][y] = 2;
-                }
-            }
-        }
-        //Clear player areas (better way?)
-        board[1][1] = 0;
-        board[1][2] = 0;
-        board[2][1] = 0;
-        board[16][1] = 0;
-        board[17][1] = 0;
-        board[17][2] = 0;
-        board[16][13] = 0;
-        board[17][13] = 0;
-        board[17][12] = 0;
-        board[1][13] = 0;
-        board[1][12] = 0;
-        board[2][13] = 0;
+    // initialize board
+    private void newRound(int[] playerType) {        
+        theMap = new Map(this);
+
         //Place Players
         whiteBomber = new Player(1, 1, 1, Color.white, playerType[0]);
         blackBomber = new Player(17, 1, 2, Color.black, playerType[1]);
@@ -500,7 +445,7 @@ public class Main extends BasicGame {
             {
                 if (left)
                 {
-                    switch( board[i][locY] )
+                    switch( theMap.board[i][locY] )
                     {
                         case 0:
                         {
@@ -521,11 +466,11 @@ public class Main extends BasicGame {
                         }
                         case 3:
                         {
-                            if (bombs[i][locY] != null)
+                            if (theMap.bombs[i][locY] != null)
                             {
                                 boolean[] b = {true, false, true, true};
-                                bombs[i][locY].setDirections(b);
-                                bombs[i][locY].explode();
+                                theMap.bombs[i][locY].setDirections(b);
+                                theMap.bombs[i][locY].explode();
                                 left = false;
                             }
                             else
@@ -544,7 +489,7 @@ public class Main extends BasicGame {
             {
                 if (right)
                 {
-                    switch( board[i][locY] )
+                    switch( theMap.board[i][locY] )
                     {
                         case 0:
                         {
@@ -565,11 +510,11 @@ public class Main extends BasicGame {
                         }
                         case 3:
                         {
-                            if (bombs[i][locY] != null)
+                            if (theMap.bombs[i][locY] != null)
                             {
                                 boolean[] b = {true, true, false, true};
-                                bombs[i][locY].setDirections(b);
-                                bombs[i][locY].explode();
+                                theMap.bombs[i][locY].setDirections(b);
+                                theMap.bombs[i][locY].explode();
                                 right = false;
                             }
                             else
@@ -588,7 +533,7 @@ public class Main extends BasicGame {
             {
                 if (up)
                 {
-                    switch( board[locX][i] )
+                    switch( theMap.board[locX][i] )
                     {
                         case 0:
                         {
@@ -609,11 +554,11 @@ public class Main extends BasicGame {
                         }
                         case 3:
                         {
-                            if (bombs[locX][i] != null)
+                            if (theMap.bombs[locX][i] != null)
                             {
                                 boolean[] b = {true, true, true, false};
-                                bombs[locX][i].setDirections(b);
-                                bombs[locX][i].explode();
+                                theMap.bombs[locX][i].setDirections(b);
+                                theMap.bombs[locX][i].explode();
                                 up = false;
                             }
                             else
@@ -632,7 +577,7 @@ public class Main extends BasicGame {
             {
                 if (down)
                 {
-                    switch( board[locX][i] )
+                    switch( theMap.board[locX][i] )
                     {
                         case 0:
                         {
@@ -653,11 +598,11 @@ public class Main extends BasicGame {
                         }
                         case 3:
                         {
-                            if (bombs[locX][i] != null)
+                            if (theMap.bombs[locX][i] != null)
                             {
                                 boolean[] b = {false, true, true, true};
-                                bombs[locX][i].setDirections(b);
-                                bombs[locX][i].explode();
+                                theMap.bombs[locX][i].setDirections(b);
+                                theMap.bombs[locX][i].explode();
                                 down = false;
                             }
                             else
@@ -717,7 +662,7 @@ public class Main extends BasicGame {
                             }
                         }
                     }
-                    fire[x][y] = new Fire(explodefield[x][y]);
+                    theMap.fire[x][y] = new Fire(explodefield[x][y]);
                 }
             }
         }
@@ -735,57 +680,57 @@ public class Main extends BasicGame {
                 boolean down = false;
                 boolean right = false;
                 boolean left = false;
-                if (fire[x][y] != null)
+                if (theMap.fire[x][y] != null)
                 {
                     if (x - 1 >= 0)
                     {
-                        if (fire[x-1][y] != null)
+                        if (theMap.fire[x-1][y] != null)
                         {
                             left = true;
                         }
                     }
                     if (x + 1 < 19)
                     {
-                        if (fire[x+1][y] != null)
+                        if (theMap.fire[x+1][y] != null)
                         {
                             right = true;
                         }
                     }
                     if (y + 1 < 15)
                     {
-                        if (fire[x][y+1] != null)
+                        if (theMap.fire[x][y+1] != null)
                         {
                             down = true;
                         }
                     }
                     if (y - 1 >= 0)
                     {
-                        if (fire[x][y-1] != null)
+                        if (theMap.fire[x][y-1] != null)
                         {
                             up = true;
                         }
                     }
-                    if (fire[x][y] != null)
+                    if (theMap.fire[x][y] != null)
                     {
                         if (up && !down && !left && !right)
                         {
-                            fire[x][y].setDirection(7);
+                            theMap.fire[x][y].setDirection(7);
                         }
                         if (up && down && !left && !right)
                         {
-                            fire[x][y].setDirection(3);
+                            theMap.fire[x][y].setDirection(3);
                         }
                         if (!up && !down && !left && right)
                         {
-                            fire[x][y].setDirection(8);
+                            theMap.fire[x][y].setDirection(8);
                         }
                         if (!up && !down && left && right)
                         {
-                            fire[x][y].setDirection(4);
+                            theMap.fire[x][y].setDirection(4);
                         }
                         if ((up || down) && (left || right))
                         {
-                            fire[x][y].setDirection(10);
+                            theMap.fire[x][y].setDirection(10);
                         }
                     }
                 }
@@ -793,31 +738,25 @@ public class Main extends BasicGame {
         }
     }
 
-    private void spawnPowerUps(int x, int y)
-    {
+    private void spawnPowerUps(int x, int y) {
         int chanceForPowerUp = mt.nextInt(5);
-        switch(chanceForPowerUp)
-        {
-            case 1:
-            {
-                board[x][y] = 5;
+        switch(chanceForPowerUp) {
+            case 1: {
+                theMap.board[x][y] = 5;
                 break;
             }
-            case 2:
-            {
-                board[x][y] = 6;
+            case 2: {
+                theMap.board[x][y] = 6;
                 break;
             }
-            default:
-            {
-                board[x][y] = 0;
+            default: {
+                theMap.board[x][y] = 0;
                 break;
             }
         }
     }
 
-    //AI is using poor logic now, but can use bombs
-    
+    //AI is using poor logic now, but can use bombs    
 
     private void drawTarget(Graphics g, Player player)
     {
@@ -903,25 +842,25 @@ public class Main extends BasicGame {
         {
             for (int y = 0; y < 15; y++)
             {
-                if (bombs[x][y] != null)
+                if (theMap.bombs[x][y] != null)
                 {
-                    if (bombs[x][y].getExploded())
+                    if (theMap.bombs[x][y].getExploded())
                     {
                         if ( ! explosion.playing())
                         {
                             explosion.play();
                         }
-                        makeExplosion(x, y, bombs[x][y].getSize(),
-                            bombs[x][y].getDirections()[0],
-                            bombs[x][y].getDirections()[1],
-                            bombs[x][y].getDirections()[2],
-                            bombs[x][y].getDirections()[3]);
-                        board[x][y] = 0;
-                        bombs[x][y] = null;
+                        makeExplosion(x, y, theMap.bombs[x][y].getSize(),
+                        theMap.bombs[x][y].getDirections()[0],
+                        theMap.bombs[x][y].getDirections()[1],
+                        theMap.bombs[x][y].getDirections()[2],
+                        theMap.bombs[x][y].getDirections()[3]);
+                        theMap.board[x][y] = 0;
+                        theMap.bombs[x][y] = null;
                     }
                     else
                     {
-                        bombs[x][y].update();
+                        theMap.bombs[x][y].update();
                     }
                 }
             }
@@ -934,46 +873,46 @@ public class Main extends BasicGame {
         {
             for (int y = 0; y < 15; y++)
             {
-                if (fire[x][y] != null)
+                if (theMap.fire[x][y] != null)
                 {
-                    if (fire[x][y].getDead())
+                    if (theMap.fire[x][y].getDead())
                     {
-                        fire[x][y] = null;
+                        theMap.fire[x][y] = null;
                         updateFireSprites();
                     }
                     else
                     {
-                        fire[x][y].update();
-                        if (players[x][y] != 0)
+                        theMap.fire[x][y].update();
+                        if (theMap.players[x][y] != 0)
                         {
-                            switch(players[x][y])
+                            switch(theMap.players[x][y])
                             {
                                 case 1:
                                 {
                                     flushPlayerReferences(1);
                                     whiteBomber.setAlive(false);
-                                    players[x][y] = 0;
+                                    theMap.players[x][y] = 0;
                                     break;
                                 }
                                 case 2:
                                 {
                                     flushPlayerReferences(2);
                                     blackBomber.setAlive(false);
-                                    players[x][y] = 0;
+                                    theMap.players[x][y] = 0;
                                     break;
                                 }
                                 case 3:
                                 {
                                     flushPlayerReferences(3);
                                     redBomber.setAlive(false);
-                                    players[x][y] = 0;
+                                    theMap.players[x][y] = 0;
                                     break;
                                 }
                                 case 4:
                                 {
                                     flushPlayerReferences(4);
                                     blueBomber.setAlive(false);
-                                    players[x][y] = 0;
+                                    theMap.players[x][y] = 0;
                                     break;
                                 }
                             }
@@ -984,20 +923,15 @@ public class Main extends BasicGame {
         }
     }
 
-    private void checkPlayer(Player player)
-    {
-        if (player.getAlive())
-        {
-            players[player.getX()][player.getY()] = player.getPID();
-            if (player.getHuman())
-            {
-                if (player.getClock() > 0)
-                {
+    private void checkPlayer(Player player) {
+        if (player.getAlive()) {
+            theMap.players[player.getX()][player.getY()] = player.getPID();
+            if (player.getHuman()) {
+                if (player.getClock() > 0) {
                     player.setClock(player.getClock()-1);
                 }
             }
-            else
-            {
+            else {
                 playerAI.updateAI(player, this);
             }
         }
@@ -1016,9 +950,9 @@ public class Main extends BasicGame {
         {
             for (int y = 0; y < 15; y++)
             {
-                if (fire[x][y] != null)
+                if (theMap.fire[x][y] != null)
                 {
-                    switch(fire[x][y].getDirection())
+                    switch(theMap.fire[x][y].getDirection())
                     {
                         case 10:
                         {
@@ -1071,97 +1005,20 @@ public class Main extends BasicGame {
         }
     }
 
-    //According to profiler, this is the most CPU intensive method (for good reason) but could use optimization
-    //If anyone has any suggestions, be sure to suggest them!
-    private void drawTiles(Graphics g)
-    {
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                tileset.getSprite(5, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                switch(board[x][y])
-                {
-                    case 1:
-                    {
-                        tileset.getSprite(4, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        break;
-                    }
-                    case 2:
-                    {
-                        tileset.getSprite(3, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        break;
-                    }
-                    case 3:
-                    {
-                        if (bombs[x][y].getTimeLeft() > 80)
-                        {
-                            bombImage.getSprite(0, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        if (bombs[x][y].getTimeLeft() <= 80 && bombs[x][y].getTimeLeft() > 50)
-                        {
-                            bombImage.getSprite(1, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        if (bombs[x][y].getTimeLeft() <= 50 && bombs[x][y].getTimeLeft() > 20)
-                        {
-                            bombImage.getSprite(2, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        if (bombs[x][y].getTimeLeft() <= 20)
-                        {
-                            bombImage.getSprite(3, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        break;
-                    }
-                    //4 is player
-                    case 5:
-                    {
-                        if (fire[x][y] == null)
-                        {
-                            tileset.getSprite(2, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        break;
-                    }
-                    case 6:
-                    {
-                        if (fire[x][y] == null)
-                        {
-                            tileset.getSprite(15, 0).draw(x * 32 + jitterX, y * 32 + jitterY);
-                        }
-                        break;
-                    }
+    private void flushPlayerReferences(int PID) {
+        for (int x = 0; x < 19; x++) {
+            for (int y = 0; y < 15; y++) {
+                if (theMap.players[x][y] == PID) {
+                    theMap.players[x][y] = 0;
                 }
             }
         }
     }
 
-    private void flushPlayerReferences(int PID)
-    {
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                if (players[x][y] == PID)
-                {
-                    players[x][y] = 0;
-                }
-            }
-        }
-    }
+    public Input getInput() { return input; }
 
-    public Input getInput()
-    {
-        return input;
-    }
-
-    public void playSound(String sound)
-    {
-        if (sound.equals("bombup"))
-        {
-            bombup.play();
-        }
-        if (sound.equals("fireup"))
-        {
-            fireup.play();
-        }
+    public void playSound(String sound) {
+        if (sound.equals("bombup")) { bombup.play(); }
+        if (sound.equals("fireup")) { fireup.play(); }
     }
 }

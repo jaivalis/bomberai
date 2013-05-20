@@ -2,12 +2,11 @@ package jbomber;
 
 public class PlayerAI {
 
-    public void updateAI(Player player, Main main)
-    {
-        int[][] board = main.board;
-        int[][] players = main.players;
-        Bomb[][] bombs = main.bombs;
-        Fire[][] fire = main.fire;
+    public void updateAI(Player player, Main main) {
+        int[][] board   = main.theMap.board;
+        int[][] players = main.theMap.players;
+        Bomb[][] bombs  = main.theMap.bombs;
+        Fire[][] fire   = main.theMap.fire;
         player.setClock(player.getClock()+1);
         if (player.getClock() > 15 && player.getAlive() && player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
         {

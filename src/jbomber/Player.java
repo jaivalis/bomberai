@@ -3,6 +3,7 @@ package jbomber;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.util.pathfinding.Path.Step;
 
 public class Player {
 
@@ -106,17 +107,17 @@ public class Player {
                     {
                         direction = 2;
                     }
-                    if (main.board[x + dirX][y + dirY] == 0 && main.players[x + dirX][y + dirY] == 0)
+                    if (main.theMap.board[x + dirX][y + dirY] == 0 && main.theMap.players[x + dirX][y + dirY] == 0)
                     {
                         moveTile = true;
                     }
-                    else if (main.board[x + dirX][y + dirY] == 5)
+                    else if (main.theMap.board[x + dirX][y + dirY] == 5)
                     {
                         firepower ++;
                         main.playSound("fireup");
                         moveTile = true;
                     }
-                    else if (main.board[x + dirX][y + dirY] == 6)
+                    else if (main.theMap.board[x + dirX][y + dirY] == 6)
                     {
                         bombAmt ++;
                         main.playSound("bombup");
@@ -154,11 +155,11 @@ public class Player {
     {
         if (alive)
         {
-            if (main.players[x+offsetTileX][y+offsetTileY] == 0)
+            if (main.theMap.players[x+offsetTileX][y+offsetTileY] == 0)
             {
-                main.players[x+offsetTileX][y+offsetTileY] = pid;
+                main.theMap.players[x+offsetTileX][y+offsetTileY] = pid;
             }
-            if (main.players[x+offsetTileX][y+offsetTileY] == pid)
+            if (main.theMap.players[x+offsetTileX][y+offsetTileY] == pid)
             {
                 if (offsetTileX == 1)
                 {
@@ -178,32 +179,32 @@ public class Player {
                 }
                 if (offsetX >= 32)
                 {
-                    main.players[x][y] = 0;
-                    main.board[x+offsetTileX][y+offsetTileY] = 0;
+                    main.theMap.players[x][y] = 0;
+                    main.theMap.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetX = 0;
                     offsetTileX = 0;
                     x += 1;
                 }
                 if (offsetY >= 32)
                 {
-                    main.players[x][y] = 0;
-                    main.board[x+offsetTileX][y+offsetTileY] = 0;
+                    main.theMap.players[x][y] = 0;
+                    main.theMap.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetY = 0;
                     offsetTileY = 0;
                     y += 1;
                 }
                 if (offsetX <= -32)
                 {
-                    main.players[x][y] = 0;
-                    main.board[x+offsetTileX][y+offsetTileY] = 0;
+                    main.theMap.players[x][y] = 0;
+                    main.theMap.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetX = 0;
                     offsetTileX = 0;
                     x += -1;
                 }
                 if (offsetY <= -32)
                 {
-                    main.players[x][y] = 0;
-                    main.board[x+offsetTileX][y+offsetTileY] = 0;
+                    main.theMap.players[x][y] = 0;
+                    main.theMap.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetY = 0;
                     offsetTileY = 0;
                     y += -1;
@@ -219,27 +220,37 @@ public class Player {
         }
     }
 
-    public boolean placeBomb(Main main)
-    {
-        if (alive)
-        {
-            if (offsetTileX == 0 && offsetTileY == 0)
-            {
-                if (main.board[x][y] == 0)
-                {
-                    if (bombAmt > 0)
-                    {
-                        main.bombs[x][y] = new Bomb(150, firepower, this);
-                        main.board[x][y] = 3;
+    public boolean placeBomb(Main main) {
+        if (alive) {
+            if (offsetTileX == 0 && offsetTileY == 0) {
+                if (main.theMap.board[x][y] == 0) {
+                    if (bombAmt > 0) {
+                        main.theMap.bombs[x][y] = new Bomb(150, firepower, this);
+                        main.theMap.board[x][y] = 3;
                         bombAmt --;
                         return true;
                     }
                 }
             }
-        }
-        return false;
+        } return false;
     }
 
+    
+    public boolean placeBomb(Map m) {
+        if (alive) {
+            if (offsetTileX == 0 && offsetTileY == 0) {
+                if (m.board[x][y] == 0) {
+                    if (bombAmt > 0) {
+                        m.bombs[x][y] = new Bomb(150, firepower, this);
+                        m.board[x][y] = 3;
+                        bombAmt --;
+                        return true;
+                    }
+                }
+            }
+        } return false;
+    }
+        
     public void draw(Graphics g, Main main)
     {
         if (alive)
@@ -296,6 +307,16 @@ public class Player {
             }
             deathClock --;
         }
+    }
+    
+    /**
+     * Simply moves the player to a given block.
+     * @param s 
+     */
+    public void move(Step s) {
+        this.x = s.getX();
+        this.y = s.getY();
+        this.clock = 0;
     }
 
     public int getPID()
