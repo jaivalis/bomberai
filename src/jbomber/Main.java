@@ -910,7 +910,7 @@ public class Main extends BasicGame {
                             flushPlayerReferences(i);
                             players[i - 1].setAlive(false);
                             theMap.players[x][y] = 0;
-                            if (getPlayersAliveCount() == 1)
+                            if (getPlayersAliveCount() <= 1)
                                 gameState = GAMESTATE.MENU.ordinal();
                         }
                     }
