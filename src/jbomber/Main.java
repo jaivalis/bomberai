@@ -17,6 +17,9 @@ public class Main extends BasicGame {
 
     private final boolean musicOn = false;
 
+    /** Enum for the gamestate, feel free to use. */
+    public enum GAMESTATE { MENU, RUNNING, MATCH_RESULTS }
+
     private int gameState = 0;
 
     /* Game State List for Reference
@@ -64,6 +67,7 @@ public class Main extends BasicGame {
     private Music bombsong;
 
     public Player whiteBomber, blackBomber, redBomber, blueBomber;
+    public Player[] players;
 
     public static MersenneTwisterFast mt = new MersenneTwisterFast();
 
@@ -425,6 +429,12 @@ public class Main extends BasicGame {
         blackBomber = new Player(17, 1, 2, Color.black, playerType[1]);
         redBomber = new Player(17, 13, 3, Color.red, playerType[2]);
         blueBomber = new Player(1, 13, 4, Color.blue, playerType[3]);
+
+        players = new Player[4];
+        players[0] = whiteBomber;
+        players[1] = blackBomber;
+        players[2] = redBomber;
+        players[3] = blueBomber;
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
@@ -883,44 +893,29 @@ public class Main extends BasicGame {
                     else
                     {
                         theMap.fire[x][y].update();
-                        if (theMap.players[x][y] != 0)
+                        int i = theMap.players[x][y];
+                        if (i >= 1 && i <= 4)
                         {
-                            switch(theMap.players[x][y])
-                            {
-                                case 1:
-                                {
-                                    flushPlayerReferences(1);
-                                    whiteBomber.setAlive(false);
-                                    theMap.players[x][y] = 0;
-                                    break;
-                                }
-                                case 2:
-                                {
-                                    flushPlayerReferences(2);
-                                    blackBomber.setAlive(false);
-                                    theMap.players[x][y] = 0;
-                                    break;
-                                }
-                                case 3:
-                                {
-                                    flushPlayerReferences(3);
-                                    redBomber.setAlive(false);
-                                    theMap.players[x][y] = 0;
-                                    break;
-                                }
-                                case 4:
-                                {
-                                    flushPlayerReferences(4);
-                                    blueBomber.setAlive(false);
-                                    theMap.players[x][y] = 0;
-                                    break;
-                                }
-                            }
+                            flushPlayerReferences(i);
+                            players[i - 1].setAlive(false);
+                            theMap.players[x][y] = 0;
+                            if (getPlayersAliveCount() == 1)
+                                gameState = GAMESTATE.MENU.ordinal();
                         }
                     }
                 }
             }
         }
+    }
+
+    /** Returns true if all pleyers are dead, false otherwise. */
+    public int getPlayersAliveCount()
+    {
+        int c = 0;
+        for (Player p : players)
+            if (p.getAlive())
+                c ++;
+        return c;
     }
 
     private void checkPlayer(Player player) {
