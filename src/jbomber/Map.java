@@ -173,39 +173,7 @@ public class Map implements TileBasedMap {
      * @param player
      * @return 
      */
-//    public boolean isPositionSafe(int xp, int yp) {
-//        Bomb b;
-//        int pow;
-//        for (int x = 0; x < WIDTH; x++) {
-//            for (int y = 0; y < HEIGHT; y++) {
-//                b = bombs[x][y];
-//                if (b != null) {
-//                    pow = b.getSize();
-//                    
-//                    if (x == xp && y == yp) {
-//                        return false;
-//                    }
-//                    if (x == xp) {
-//                        while (pow > -1) {
-//                            if (y + pow == yp) { return false; }
-//                            if (y - pow == yp) { return false; }                            
-//                            pow--;
-//                        }
-//                    }
-//                    if (y == yp) {
-//                        while (pow > -1) {
-//                            if (x + pow == xp) { return false; }
-//                            if (x - pow == xp) { return false; }
-//                            pow--;
-//                        }
-//                    }
-//                }
-//            }
-//        }        
-//        return true;
-//    }
-    
-    public boolean isPositionSafeAlternate(int x, int y) {   
+    public boolean isPositionSafe(int x, int y) {
         int offset = 0;        
         boolean upFlag, downFlag, leftFlag, rightFlag;
         upFlag = downFlag = leftFlag = rightFlag = true;

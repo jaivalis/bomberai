@@ -13,7 +13,7 @@ public abstract class GenericAI {
     protected AStarPathFinder finder;    
     protected ArrayList<Player> players;
     
-    public abstract void updateAI(Player player, Main main);    
+    public abstract void updateAI(Player player, Main main);
     
     protected Path findClosestOponent() {
         finder = new AStarPathFinder(map, 500, false);
@@ -62,7 +62,7 @@ public abstract class GenericAI {
             co--;
         }
         for (Cell c : hs) {
-            if (map.isPositionSafeAlternate(c.x, c.y)) {
+            if (map.isPositionSafe(c.x, c.y)) {
                 path = finder.findPath(new EnemyMover(this.player.getColor().toString()),
                         this.player.getX(), this.player.getY(), c.x, c.y);
                 return path;
@@ -71,8 +71,23 @@ public abstract class GenericAI {
         return null;
     }
     
-    protected boolean isEnemyReachable() {
-        Path p = findClosestOponent();        
+    /**
+     * Given a step it decides upon the actions required to move in that
+     * direction.
+     * @param s 
+     */
+    protected void takeStep(Path.Step s, Main m) {
+        if (map.hasObstacle(s.getX(), s.getY())) {
+            // place bomb, move to safety
+            player.placeBomb(map);
+        }
+        else { // move regularly
+            player.move(s.getX() - this.player.getX(), s.getY() - this.player.getY(), m);
+        }
+    }
+    
+    protected boolean isEnemyReachable(Path p) {
+        if (p == null) { return false; }
         for (int i = 0; i < p.getLength(); i++) {
             if (map.board[p.getX(i)][p.getY(i)] != map.OBSTACLE) {
                 return false;
