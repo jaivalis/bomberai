@@ -1,15 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jbomber;
 
 import org.newdawn.slick.util.pathfinding.Mover;
 
-/**
- *
- * @author aivalis
- */
 public class EnemyMover implements Mover {
     /** The unit ID moving */
     private String id;
