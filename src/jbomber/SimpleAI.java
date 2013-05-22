@@ -23,7 +23,7 @@ public class SimpleAI extends GenericAI {
         }
         
         if (player.getClock() > 15 && player.getAlive()) {            
-            if (!map.isPositionSafeAlternate(player.getX(), player.getY())) {
+            if (!map.isPositionSafe(player.getX(), player.getY())) {
                 // unsafe, must move away
                 Path safe = findClosestSafeSpot();
                 
@@ -31,13 +31,19 @@ public class SimpleAI extends GenericAI {
                 takeStep(safe.getStep(1), main);
             }
             else {
-                // safe, time to think
                 Path op = super.findClosestOponent();
                 Path po = findClosestPowerUp();
 
+                if (isEnemyReachable(op)) {
+                    // attack enemy
+                } else {                    
+                    // safe, time to think
+                    // explore, look for powerups
+                }
+                
                 Step st = chooseNextStep(op, po);
                 if (st == null) {return;} // TODO: remove
-                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
+                if ( map.isPositionSafe(st.getX(), st.getY()) ) {
                     takeStep(st, main);
                 }
             }
@@ -64,23 +70,7 @@ public class SimpleAI extends GenericAI {
     }
     
     /**
-     * Given a step it decides upon the actions required to move in that
-     * direction.
-     * @param s 
-     */
-    private void takeStep(Step s, Main m) {
-        if (map.hasObstacle(s.getX(), s.getY())) {
-            // place bomb, move to safety
-            player.placeBomb(map);
-        }
-        else { // move regularly
-            player.move(s.getX() - this.player.getX(), s.getY() - this.player.getY(), m);
-        }
-    }
-
-    
-    /**
-     * finds a spot that is not targeted by a bomb.
+     * Finds a spot that is not targeted by a bomb.
      * @return 
      */
     private Path findClosestSafeSpot() {        
@@ -95,7 +85,4 @@ public class SimpleAI extends GenericAI {
         }
         return path;
     }
-    
-    
-
 }
