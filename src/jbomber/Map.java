@@ -91,7 +91,8 @@ public class Map implements TileBasedMap {
     /**
      * Check if a particular location on the map is blocked. Note
      * that the x and y parameters are floating point numbers meaning
-     * that we can be checking partially across a grid cell.
+     * that we can be checking partially across a grid cell. Blocking objects
+     * include BLOCKs and bombs.
      * 
      * @param x The x position to check for blocking
      * @param y The y position to check for blocking
@@ -99,7 +100,8 @@ public class Map implements TileBasedMap {
      */
     @Override
     public boolean blocked(PathFindingContext pfc, int x, int y) {
-        return board[(int) x][(int) y] == BLOCKED;// || board[(int) x][(int) y] == OBSTACLE;
+        return board[(int) x][(int) y] == BLOCKED || 
+                bombs[(int) x][(int) y] != null;
     }
 
     /**

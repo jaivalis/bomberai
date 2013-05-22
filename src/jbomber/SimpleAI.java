@@ -95,6 +95,8 @@ public class SimpleAI extends PlayerAI {
         }
         else { // move regularly
             player.move(s.getX() - this.player.getX(), s.getY() - this.player.getY(), m);
+//            this.player.setX(s.getX() - this.player.getX());
+//            this.player.setY(s.getY() - this.player.getY());
             //player.move(s);
             //player.shift(m);
         }
@@ -130,6 +132,10 @@ public class SimpleAI extends PlayerAI {
         return path;
     }
     
+    /**
+     * finds a spot that is not targeted by a bomb.
+     * @return 
+     */
     private Path findClosestSafeSpot() {        
         finder = new AStarPathFinder(map, 500, false);
         Path path = null;
@@ -139,7 +145,8 @@ public class SimpleAI extends PlayerAI {
         while ( (path = findSafeSpot(distance, x, y)) == null) {
             distance++;
             if (distance > 9) { return null; } // accept your faith.
-        }        
+        }
+        System.out.println("path length == " + path.getLength());
         return path;
     }
     
@@ -166,26 +173,11 @@ public class SimpleAI extends PlayerAI {
         for (Cell c : hs) {
             if (map.isPositionSafeAlternate(c.x, c.y)) {
                 path = finder.findPath(new EnemyMover(this.color), this.x, this.y, c.x, c.y);
-//                if (path.getLength() == l) {
-                System.out.println("returning somethin");
+//                if (path.getLength() == l) { // TODO: is this required?
                     return path;
 //                }
             }
         }
-//        if (l == 1) {
-//            if (map.isPositionSafeAlternate(x + l, y)) {
-//                return finder.findPath(new EnemyMover(this.color), this.x, this.y, this.x + l, this.y);
-//            }
-//            if (map.isPositionSafeAlternate(x - l, y)) {
-//                return finder.findPath(new EnemyMover(this.color), this.x, this.y, this.x - l, this.y);
-//            }
-//            if (map.isPositionSafeAlternate(x, y + l)) {
-//                return finder.findPath(new EnemyMover(this.color), this.x, this.y, this.x, this.y + l);
-//            }
-//            if (map.isPositionSafeAlternate(x, y - l)) {
-//                return finder.findPath(new EnemyMover(this.color), this.x, this.y, this.x, this.y - l);
-//            }
-//        }
         return null;
     }
     
