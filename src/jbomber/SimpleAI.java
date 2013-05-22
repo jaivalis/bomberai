@@ -22,8 +22,7 @@ public class SimpleAI extends PlayerAI {
         this.y = player.getY();        
         this.players = new ArrayList<Player>();
         this.player = player;
-        
-        
+                
         players.add(main.blackBomber);
         players.add(main.blueBomber);
         players.add(main.redBomber);
@@ -53,8 +52,7 @@ public class SimpleAI extends PlayerAI {
                     takeStep(st, main);
                 }
             }
-        }
-        
+        }        
     }
     
     /**

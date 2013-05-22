@@ -58,7 +58,7 @@ public class Map implements TileBasedMap {
         for (int x = 0; x < 19; x++) {
             for (int y = 0; y < 15; y++) {
                 if (board[x][y] != 1 && mt.nextInt(5) > 1) {
-//                    board[x][y] = OBSTACLE;
+                    board[x][y] = OBSTACLE;
                 }
             }
         }
