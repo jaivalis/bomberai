@@ -174,15 +174,11 @@ public class Main extends BasicGame {
             //Check to see if anyone has been killed
             checkFire();
             //Check input or AI for each player
-            checkPlayer(whiteBomber);
-            checkPlayer(blackBomber);
-            checkPlayer(redBomber);
-            checkPlayer(blueBomber);
+            for (Player p : players)
+                checkPlayer(p);
             //Shift any players currently in transition between tiles
-            whiteBomber.shift(this);
-            blackBomber.shift(this);
-            redBomber.shift(this);
-            blueBomber.shift(this);
+            for (Player p : players)
+                p.shift(this);
             //Update the screen shake effect if necessary
             checkShake();
             //Update the fog effect
@@ -207,10 +203,8 @@ public class Main extends BasicGame {
         if (gameState == 1) {
             theMap.draw(this);
             drawFire(g);
-            whiteBomber.draw(g, this);
-            blackBomber.draw(g, this);
-            redBomber.draw(g, this);
-            blueBomber.draw(g, this);
+            for (Player p : players)
+                p.draw(g, this);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
             //These commented out lines are for testing the AI
