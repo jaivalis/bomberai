@@ -1,5 +1,6 @@
 package jbomber;
 
+import java.util.HashMap;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -29,10 +30,11 @@ public class Main extends BasicGame {
      */
 
     //0 - off 1 - human 2 - CPU
-    private int playerType[] = {1,2,0,0};
-
-    private GenericAI playerAI;
-
+    private int playerType[] = {1,2,2,2};
+    
+//    private GenericAI aiArr[] = {null, null, null, null };
+    private HashMap<Player, GenericAI> aiMap; 
+    
     //Menu Resources
     private Image bgSmall;
     private Image bgBig;
@@ -102,7 +104,12 @@ public class Main extends BasicGame {
     public void init(GameContainer container) throws SlickException
     {
         //Load AI engine
-        playerAI = new SimpleAI();
+        aiMap = new HashMap<Player, GenericAI>();
+        
+//        aiArr[0] = new SimpleAI();
+//        aiArr[1] = new SimpleAI();
+//        aiArr[2] = new SimpleAI();
+        
         //Menu Graphics Loading
         title = new Image("data/menu/title.png");
         playButton = new Image("data/menu/button_play.png");
@@ -425,6 +432,10 @@ public class Main extends BasicGame {
         blackBomber = new Player(17, 1, 2, Color.black, playerType[1]);
         redBomber = new Player(17, 13, 3, Color.red, playerType[2]);
         blueBomber = new Player(1, 13, 4, Color.blue, playerType[3]);
+        
+        aiMap.put(redBomber, new SimpleAI());
+        aiMap.put(blackBomber, new SimpleAI());
+        aiMap.put(blueBomber, new SimpleAI());
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
@@ -932,7 +943,8 @@ public class Main extends BasicGame {
                 }
             }
             else {
-                playerAI.updateAI(player, this);
+                aiMap.get(player).updateAI(player, this);
+//                playerAI.updateAI(player, this);
             }
         }
     }
