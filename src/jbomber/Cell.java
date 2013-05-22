@@ -10,15 +10,12 @@ public class Cell {
         this.y = y;
     }
     
-    /**
-     * 
-     * @param xBound
-     * @param yBound
-     * @return 
-     */
     public HashSet<Cell> getNeighbors(Map m) {
         HashSet<Cell> ret = new HashSet<Cell>();
-        
+//        System.out.println("x + 1 = " + (x+1));
+//        System.out.println("x - 1 = " + (x-1));
+//        System.out.println("y + 1 = " + (y+1));
+//        System.out.println("y - 1 = " + (y-1));
         if (this.x + 1 < m.WIDTH) {
             if (m.board[x+1][y] != m.BLOCKED && m.board[x+1][y] != m.OBSTACLE) {
                 ret.add(new Cell(x+1, y));
@@ -31,6 +28,7 @@ public class Cell {
         }        
         if (this.y + 1 > m.HEIGHT) {
             if (m.board[x][y+1] != m.BLOCKED && m.board[x][y+1] != m.OBSTACLE) {
+                
                 ret.add(new Cell(x, y+1));
             }
         }
@@ -38,8 +36,7 @@ public class Cell {
             if (m.board[x][y-1] != m.BLOCKED && m.board[x][y-1] != m.OBSTACLE) {
                 ret.add(new Cell(x, y-1));
             }
-        }
-        
+        }        
         return ret;
     }
     

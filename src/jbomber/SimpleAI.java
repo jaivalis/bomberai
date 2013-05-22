@@ -41,17 +41,17 @@ public class SimpleAI extends PlayerAI {
                 if (safe == null) { return; } // I have accepted my fate.
                 takeStep(safe.getStep(1), main);
             }
-            else {
-                // safe, time to think
-                Path op = findClosestOponent();
-                Path po = findClosestPowerUp();
-
-                Step st = chooseNextStep(op, po);
-                if (st == null) {return;} // TODO: remove
-                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
-                    takeStep(st, main);
-                }
-            }
+//            else {
+//                // safe, time to think
+//                Path op = findClosestOponent();
+//                Path po = findClosestPowerUp();
+//
+//                Step st = chooseNextStep(op, po);
+//                if (st == null) {return;} // TODO: remove
+//                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
+//                    takeStep(st, main);
+//                }
+//            }
         }        
     }
     
@@ -62,10 +62,16 @@ public class SimpleAI extends PlayerAI {
      * @return 
      */
     private Step chooseNextStep(Path op, Path po) {
-        if (po == null && op == null) { // TODO: remove
+        if (po == null && op == null) {
             return null;
         }
-        if (po == null || op.getLength() < po.getLength() + 3) {
+        if (po == null && op!= null) {
+            return op.getStep(1);
+        }
+        if (op == null && po!= null) {
+            return po.getStep(1);
+        }
+        if (op.getLength() < po.getLength() + 3) {
             // go for oponent
             return op.getStep(1);
         } else {
@@ -105,7 +111,7 @@ public class SimpleAI extends PlayerAI {
         return path;
     }
     
-    private Path findClosestPowerUp() {        
+    private Path findClosestPowerUp() {
         finder = new AStarPathFinder(map, 500, false);
         Path path = null;
         
@@ -130,6 +136,7 @@ public class SimpleAI extends PlayerAI {
         int distance = 1;
         
         while ( (path = findSafeSpot(distance, x, y)) == null) {
+//            System.out.println("dist = " + distance);
             distance++;
             if (distance > 9) { return null; } // accept your faith.
         }
@@ -156,8 +163,9 @@ public class SimpleAI extends PlayerAI {
             hs = expandNeighbors(hs);
             co--;
         }
-        System.out.println("hs size " + hs.size());
+//        System.out.println("hs size " + hs.size() + " hs.size() == l ? " + (hs.size() == l));
         for (Cell c : hs) {
+//            System.out.println("c.x, x.y = [" + c.x + ", " + c.y + "]");
             if (map.isPositionSafeAlternate(c.x, c.y)) {
                 path = finder.findPath(new EnemyMover(this.player.getColor().toString()), this.x, this.y, c.x, c.y);
 //                if (path.getLength() == l) { // TODO: is this required?
@@ -165,6 +173,7 @@ public class SimpleAI extends PlayerAI {
 //                }
             }
         }
+//        System.out.println("returning null for l = " + l);
         return null;
     }
     

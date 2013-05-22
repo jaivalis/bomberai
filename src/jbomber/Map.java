@@ -209,7 +209,7 @@ public class Map implements TileBasedMap {
         int offset = 0;        
         boolean upFlag, downFlag, leftFlag, rightFlag;
         upFlag = downFlag = leftFlag = rightFlag = true;
-        if (bombs[x][y]!= null || hasFire(x,y)) return false;
+        if (bombs[x][y]!= null || hasFire(x,y)) { return false; }
         while (upFlag || downFlag || leftFlag || rightFlag) {
             if (upFlag) {
                 if (x+offset == WIDTH) { upFlag = false; break; }
