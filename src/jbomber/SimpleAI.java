@@ -1,25 +1,14 @@
 package jbomber;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
-public class SimpleAI extends GenericAI {    
-    private Map map;
-    
-    private int x, y;
-    private Player player;
-    
-    private AStarPathFinder finder;
-    
-    private ArrayList<Player> players;
+public class SimpleAI extends GenericAI {
     
     @Override
-    public void updateAI(Player player, Main main) {
-        this.x = player.getX();
-        this.y = player.getY();        
+    public void updateAI(Player player, Main main) {       
         this.players = new ArrayList<Player>();
         this.player = player;
                 
@@ -61,16 +50,10 @@ public class SimpleAI extends GenericAI {
      * @param po
      * @return 
      */
-    private Step chooseNextStep(Path op, Path po) {
-        if (po == null && op == null) {
-            return null;
-        }
-        if (po == null && op!= null) {
-            return op.getStep(1);
-        }
-        if (op == null && po!= null) {
-            return po.getStep(1);
-        }
+    private Step chooseNextStep(Path op, Path po) {        
+        if (po == null && op == null)   { return null; }
+        if (po == null && op!= null)    { return op.getStep(1); }
+        if (op == null && po!= null)    { return po.getStep(1); }
         if (op.getLength() < po.getLength() + 3) {
             // go for oponent
             return op.getStep(1);
@@ -106,7 +89,7 @@ public class SimpleAI extends GenericAI {
         
         int distance = 1;
         
-        while ( (path = findSafeSpot(distance, x, y)) == null) {
+        while ( (path = findSafeSpot(distance, this.player.getX(), this.player.getY())) == null) {
             distance++;
             if (distance > 9) { return null; } // accept your faith.
         }
