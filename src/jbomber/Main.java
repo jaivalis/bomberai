@@ -31,7 +31,7 @@ public class Main extends BasicGame {
     //0 - off 1 - human 2 - CPU
     private int playerType[] = {1,2,0,0};
 
-    private PlayerAI playerAI;
+    private GenericAI playerAI;
 
     //Menu Resources
     private Image bgSmall;
