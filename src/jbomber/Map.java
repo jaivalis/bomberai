@@ -216,7 +216,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x+offset][y] == OBSTACLE) { upFlag = false; }
                 else {
                     if (this.bombs[x+offset][y] != null) {
-                        System.out.println("~>" + this.bombs[x+offset][y].getSize());
+//                        System.out.println("~>" + this.bombs[x+offset][y].getSize());
                         if (this.bombs[x+offset][y].getSize() >= offset) { return false; }
                     }
                 }
@@ -226,8 +226,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x-offset][y] == OBSTACLE) { downFlag = false; }
                 else {
                     if (this.bombs[x-offset][y] != null) {
-                        System.out.println("~~>" + this.bombs[x-offset][y].getSize());
-                        System.out.println("~~>" + offset);
+//                        System.out.println("~~>" + this.bombs[x-offset][y].getSize());
                         if (this.bombs[x-offset][y].getSize() >= offset) { return false; }
                     }
                 }
@@ -237,7 +236,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x][y+offset] == OBSTACLE) { leftFlag = false; }
                 else {
                     if (this.bombs[x][y+offset] != null) {
-                        System.out.println("~~~>" + this.bombs[x][y+offset].getSize());
+//                        System.out.println("~~~>" + this.bombs[x][y+offset].getSize());
                         if (this.bombs[x][y+offset].getSize() >= offset) { return false; }
                     }
                 }
@@ -247,7 +246,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x][y-offset] == OBSTACLE) { rightFlag = false; }
                 else {
                     if (this.bombs[x][y-offset] != null) {
-                        System.out.println("~~~~>" + this.bombs[x][y-offset].getSize());
+//                        System.out.println("~~~~>" + this.bombs[x][y-offset].getSize());
                         if (this.bombs[x][y-offset].getSize() >= offset) { return false; }
                     }
                 }

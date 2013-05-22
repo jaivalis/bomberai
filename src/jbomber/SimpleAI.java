@@ -10,7 +10,6 @@ public class SimpleAI extends PlayerAI {
     private Map map;
     
     private int x, y;
-    private String color;
     private Player player;
     
     private AStarPathFinder finder;
@@ -29,37 +28,31 @@ public class SimpleAI extends PlayerAI {
         players.add(main.blueBomber);
         players.add(main.redBomber);
         players.add(main.whiteBomber);
-        
-        this.color = player.getColor().toString();
-        
-        
+                        
         player.setClock(player.getClock()+1);
         if (map == null) {
             this.map = main.theMap;
         }
         
-        if (player.getClock() > 15 && player.getAlive()) {
-            
+        if (player.getClock() > 15 && player.getAlive()) {            
             if (!map.isPositionSafeAlternate(player.getX(), player.getY())) {
                 // unsafe, must move away
-                System.out.println("unsafe!!");
                 Path safe = findClosestSafeSpot();
                 
                 if (safe == null) { return; } // I have accepted my fate.
                 takeStep(safe.getStep(1), main);
             }
-//            else {                
-//                System.out.println("safe!!");
-//                // safe, time to think
-//                Path op = findClosestOponent();
-//                Path po = findClosestPowerUp();
-//
-//                Step st = chooseNextStep(op, po);
-//                if (st == null) {return;} // TODO: remove
-//                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
-//                    takeStep(st, main);
-//                }
-//            }
+            else {
+                // safe, time to think
+                Path op = findClosestOponent();
+                Path po = findClosestPowerUp();
+
+                Step st = chooseNextStep(op, po);
+                if (st == null) {return;} // TODO: remove
+                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
+                    takeStep(st, main);
+                }
+            }
         }
         
     }
@@ -108,12 +101,9 @@ public class SimpleAI extends PlayerAI {
         
         for (Player p : players) {
             if (!p.getAlive()) { continue; }
-            if (p.getColor().toString().equals(this.color)) { continue; }
-            path = finder.findPath(new EnemyMover(this.color), this.x, this.y, p.getX(), p.getY());
-            
-//            System.out.println("Distance to opponent: " + path.getLength());            
+            if (p.getColor().toString().equals(this.player.getColor().toString())) { continue; }
+            path = finder.findPath(new EnemyMover(this.player.getColor().toString()), this.x, this.y, p.getX(), p.getY());           
         }
-        
         return path;
     }
     
@@ -124,8 +114,7 @@ public class SimpleAI extends PlayerAI {
         for (int i = 0; i < map.getWidthInTiles(); i++) {
             for (int j = 0; j < map.getHeightInTiles(); j++) {
                 if (map.board[i][j] == 5 || map.board[i][j] == 6) {
-                    path = finder.findPath(new EnemyMover(this.color), this.x, this.y, i, j);
-//                    System.out.println("Distance to powerup: " + path.getLength());
+                    path = finder.findPath(new EnemyMover(this.player.getColor().toString()), this.x, this.y, i, j);
                 }
             }
         }
@@ -172,7 +161,7 @@ public class SimpleAI extends PlayerAI {
         System.out.println("hs size " + hs.size());
         for (Cell c : hs) {
             if (map.isPositionSafeAlternate(c.x, c.y)) {
-                path = finder.findPath(new EnemyMover(this.color), this.x, this.y, c.x, c.y);
+                path = finder.findPath(new EnemyMover(this.player.getColor().toString()), this.x, this.y, c.x, c.y);
 //                if (path.getLength() == l) { // TODO: is this required?
                     return path;
 //                }
