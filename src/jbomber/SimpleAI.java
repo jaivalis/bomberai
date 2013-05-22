@@ -41,17 +41,17 @@ public class SimpleAI extends PlayerAI {
                 if (safe == null) { return; } // I have accepted my fate.
                 takeStep(safe.getStep(1), main);
             }
-//            else {
-//                // safe, time to think
-//                Path op = findClosestOponent();
-//                Path po = findClosestPowerUp();
-//
-//                Step st = chooseNextStep(op, po);
-//                if (st == null) {return;} // TODO: remove
-//                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
-//                    takeStep(st, main);
-//                }
-//            }
+            else {
+                // safe, time to think
+                Path op = findClosestOponent();
+                Path po = findClosestPowerUp();
+
+                Step st = chooseNextStep(op, po);
+                if (st == null) {return;} // TODO: remove
+                if ( map.isPositionSafeAlternate(st.getX(), st.getY()) ) {
+                    takeStep(st, main);
+                }
+            }
         }        
     }
     
