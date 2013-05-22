@@ -58,7 +58,7 @@ public class Map implements TileBasedMap {
         for (int x = 0; x < 19; x++) {
             for (int y = 0; y < 15; y++) {
                 if (board[x][y] != 1 && mt.nextInt(5) > 1) {
-//                    board[x][y] = OBSTACLE;
+                    board[x][y] = OBSTACLE;
                 }
             }
         }
@@ -91,7 +91,8 @@ public class Map implements TileBasedMap {
     /**
      * Check if a particular location on the map is blocked. Note
      * that the x and y parameters are floating point numbers meaning
-     * that we can be checking partially across a grid cell.
+     * that we can be checking partially across a grid cell. Blocking objects
+     * include BLOCKs and bombs.
      * 
      * @param x The x position to check for blocking
      * @param y The y position to check for blocking
@@ -99,7 +100,8 @@ public class Map implements TileBasedMap {
      */
     @Override
     public boolean blocked(PathFindingContext pfc, int x, int y) {
-        return board[(int) x][(int) y] == BLOCKED;// || board[(int) x][(int) y] == OBSTACLE;
+        return board[(int) x][(int) y] == BLOCKED || 
+                bombs[(int) x][(int) y] != null;
     }
 
     /**
@@ -207,14 +209,14 @@ public class Map implements TileBasedMap {
         int offset = 0;        
         boolean upFlag, downFlag, leftFlag, rightFlag;
         upFlag = downFlag = leftFlag = rightFlag = true;
-        if (bombs[x][y]!= null || hasFire(x,y)) return false;
+        if (bombs[x][y]!= null || hasFire(x,y)) { return false; }
         while (upFlag || downFlag || leftFlag || rightFlag) {
             if (upFlag) {
                 if (x+offset == WIDTH) { upFlag = false; break; }
                 if (this.board[x+offset][y] == OBSTACLE) { upFlag = false; }
                 else {
                     if (this.bombs[x+offset][y] != null) {
-                        System.out.println("~>" + this.bombs[x+offset][y].getSize());
+//                        System.out.println("~>" + this.bombs[x+offset][y].getSize());
                         if (this.bombs[x+offset][y].getSize() >= offset) { return false; }
                     }
                 }
@@ -224,8 +226,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x-offset][y] == OBSTACLE) { downFlag = false; }
                 else {
                     if (this.bombs[x-offset][y] != null) {
-                        System.out.println("~~>" + this.bombs[x-offset][y].getSize());
-                        System.out.println("~~>" + offset);
+//                        System.out.println("~~>" + this.bombs[x-offset][y].getSize());
                         if (this.bombs[x-offset][y].getSize() >= offset) { return false; }
                     }
                 }
@@ -235,7 +236,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x][y+offset] == OBSTACLE) { leftFlag = false; }
                 else {
                     if (this.bombs[x][y+offset] != null) {
-                        System.out.println("~~~>" + this.bombs[x][y+offset].getSize());
+//                        System.out.println("~~~>" + this.bombs[x][y+offset].getSize());
                         if (this.bombs[x][y+offset].getSize() >= offset) { return false; }
                     }
                 }
@@ -245,7 +246,7 @@ public class Map implements TileBasedMap {
                 if (this.board[x][y-offset] == OBSTACLE) { rightFlag = false; }
                 else {
                     if (this.bombs[x][y-offset] != null) {
-                        System.out.println("~~~~>" + this.bombs[x][y-offset].getSize());
+//                        System.out.println("~~~~>" + this.bombs[x][y-offset].getSize());
                         if (this.bombs[x][y-offset].getSize() >= offset) { return false; }
                     }
                 }
