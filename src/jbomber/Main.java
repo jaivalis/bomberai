@@ -437,9 +437,10 @@ public class Main extends BasicGame {
         players[2] = redBomber;
         players[3] = blueBomber;
 
-        aiMap.put(redBomber, new SimpleAI());
-        aiMap.put(blackBomber, new SimpleAI());
-        aiMap.put(blueBomber, new SimpleAI());
+        aiMap.put(redBomber, new MapClearAI());
+        //aiMap.put(redBomber, new SimpleAI());
+        //aiMap.put(blackBomber, new SimpleAI());
+        //aiMap.put(blueBomber, new SimpleAI());
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
