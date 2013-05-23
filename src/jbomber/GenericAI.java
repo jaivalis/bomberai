@@ -7,14 +7,38 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 public abstract class GenericAI {
     protected Map map;
-    
     protected Player player;
-    
     protected AStarPathFinder finder;    
     protected ArrayList<Player> players;
+    protected Main main;
+   
+    public GenericAI(Main main, Player thisPlayer)
+    {
+        this.main = main;
+        this.map = main.theMap;
+        this.finder = new AStarPathFinder(this.map, 500, false);
+        this.players = new ArrayList<Player>();
+        this.player = thisPlayer;
+        players.add(main.blackBomber);
+        players.add(main.blueBomber);
+        players.add(main.redBomber);
+        players.add(main.whiteBomber);
+        System.out.println("init done");
+    }
     
-    public abstract void updateAI(Player player, Main main);
-    
+    /**
+     * Abstract update method: checks if the player can call an update, and then
+     * calls the updateAI that should be implemented by subclasses 
+     */
+    public void abstractUpdateAI()
+    {
+        player.setClock(player.getClock()+1);
+        
+        if (player.getClock() > 15 && player.getAlive()) {            
+            updateAI();
+        }        
+    }
+
     protected Path findClosestOponent() {
         finder = new AStarPathFinder(map, 500, false);
         Path path = null;
@@ -105,4 +129,7 @@ public abstract class GenericAI {
         s.addAll(tmp);
         return s;
     }
+
+
+    public abstract void updateAI();
 }

@@ -7,55 +7,41 @@ import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
 public class MapClearAI extends GenericAI {
-    private AStarPathFinder finder; 
 
-    public MapClearAI()
+    public MapClearAI (Main main, Player player)
     {
-        super();
-        finder = new AStarPathFinder(map, 500, false);
+        super(main, player);
     }
 
     @Override
-    public void updateAI(Player player, Main main) {       
-        this.players = new ArrayList<Player>();
-        this.player = player;
-                
-        players.add(main.blackBomber);
-        players.add(main.blueBomber);
-        players.add(main.redBomber);
-        players.add(main.whiteBomber);
-                        
-        player.setClock(player.getClock()+1);
-        if (map == null) {
-            this.map = main.theMap;
+    public void updateAI() {       
+        if (!map.isPositionSafe(player.getX(), player.getY())) {
+            // unsafe, must move away
+            Path safe = findClosestSafeSpot();
+            
+            if (safe == null) { return; } // I have accepted my fate.
+            takeStep(safe.getStep(1), main);
         }
-        
-        if (player.getClock() > 15 && player.getAlive()) {            
-            if (!map.isPositionSafe(player.getX(), player.getY())) {
-                // unsafe, must move away
-                Path safe = findClosestSafeSpot();
-                
-                if (safe == null) { return; } // I have accepted my fate.
-                takeStep(safe.getStep(1), main);
+        else {
+            // safe, time to think
+            // Get the path to the closest obstacle to destroy
+            Path obstacle = findClosestObstacle();
+            // check for null:
+            if(obstacle == null)
+                return;
+            // Get the first step to that path
+            Step st = obstacle.getStep(1);
+            // There should be a path 
+            if (st == null) {
+                System.out.println("NO STEP FOUND!?");
+                return;
             }
-            else {
-                // safe, time to think
-                // Get the path to the closest obstacle to destroy
-                Path obstacle = findClosestObstacle();
-                // Get the first step to that path
-                Step st = obstacle.getStep(1);
-                // There should be a path 
-                if (st == null) {
-                    System.out.println("NO STEP FOUND!?");
-                    return;
-                }
-                if ( map.isPositionSafe(st.getX(), st.getY()) ) {
-                    takeStep(st, main);
-                }
-                else 
-                    System.out.println("unsafe path, not taking step");
+            if ( map.isPositionSafe(st.getX(), st.getY()) ) {
+                takeStep(st, main);
             }
-        }        
+            else 
+                System.out.println("unsafe path, not taking step");
+        }
     }
     
     private Path findClosestObstacle()
@@ -81,6 +67,7 @@ public class MapClearAI extends GenericAI {
         }
         for (Cell c : cells) {
             if (map.hasObstacle(c.x, c.y)) {
+                System.out.printf("found obstacle at %d, %d\n", c.x, c.y);
                 Path path = finder.findPath(new EnemyMover(this.player.getColor().toString()),
                     this.player.getX(), this.player.getY(), c.x, c.y);
                 return path;

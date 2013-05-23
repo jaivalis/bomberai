@@ -33,7 +33,7 @@ public class Main extends BasicGame {
      */
 
     //0 - off 1 - human 2 - CPU
-    private int playerType[] = {1,2,2,2};
+    private int playerType[] = {1,2,0,0};
     
 //    private GenericAI aiArr[] = {null, null, null, null };
     private HashMap<Player, GenericAI> aiMap; 
@@ -437,10 +437,9 @@ public class Main extends BasicGame {
         players[2] = redBomber;
         players[3] = blueBomber;
 
-        aiMap.put(redBomber, new MapClearAI());
-        //aiMap.put(redBomber, new SimpleAI());
-        //aiMap.put(blackBomber, new SimpleAI());
-        //aiMap.put(blueBomber, new SimpleAI());
+        aiMap.put(blackBomber, new MapClearAI(this, blackBomber));
+        aiMap.put(redBomber, new SimpleAI(this, redBomber));
+        aiMap.put(blueBomber, new SimpleAI(this, blueBomber));
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
@@ -933,7 +932,7 @@ public class Main extends BasicGame {
                 }
             }
             else {
-                aiMap.get(player).updateAI(player, this);
+                aiMap.get(player).abstractUpdateAI();
 //                playerAI.updateAI(player, this);
             }
         }
