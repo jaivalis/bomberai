@@ -1,0 +1,79 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[final]{graphicx}
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage[margin=2.5cm, nohead]{geometry}
+\usepackage{palatino, url, multicol}
+\usepackage{amssymb, fancyhdr, latexsym, url, verbatim}
+\usepackage{algorithm, algorithmic}
+\usepackage{hyperref}
+\usepackage[all]{xy}
+%\usepackage{listings}
+\usepackage[english]{babel}
+\usepackage[format=plain,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage{xspace}
+%\usepackage{subfigure} % has to be loaded after caption to prevent clash Commented, because subfig is the newer (and presumably
+% better) version of subfigure...
+%\usepackage{subfig}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage[all]{xy}
+
+%\usepackage[titles,subfigure]{tocloft}
+%\setlength{\cftbeforesecskip}{0.1cm}
+
+\newcommand{\todo}[1]{\colorbox{red}{\color{white}#1}}
+
+\begin{document}
+
+\input{sections/title}
+\newpage
+
+\newpage
+\pagenumbering{roman}
+\vspace*{-2cm}
+\tableofcontents
+
+\newpage
+
+\begin{abstract}
+\end{abstract}
+
+\pagenumbering{arabic}
+\section{Introduction}
+\input{sections/introduction}
+
+%\section{Related Work}
+%\label{sec:relatedWork}
+%\input{sections/relatedWork}
+
+\section{Approach}
+\input{sections/approach}
+
+\section{Implementation}
+\label{sec:implementation}
+\input{sections/implementation}
+
+%\section{Method}
+%\label{sec:method}
+%\input{sections/method}
+
+\section{Results}
+\input{sections/results}
+
+\section{Discussion}
+\input{sections/discussion}
+
+\section{Future Work}
+\input{sections/futureWork}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{references}
+
+\newpage
+\pagenumbering{alph}
+\section{Appendix}
+\input{sections/appendix}
+
+\end{document}
