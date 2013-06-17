@@ -37,7 +37,7 @@ public class Player {
 
     private boolean[] moving;
 
-    private int type;
+	public int type;
 
     Player(int x, int y, int number, Color color, int type)
     {

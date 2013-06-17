@@ -17,6 +17,10 @@ import org.newdawn.slick.geom.Rectangle;
 public class Main extends BasicGame {
 
     private final boolean musicOn = false;
+
+	// Do not forget to set this to false before we turn this in
+    private final boolean MUTE_SOUND = true;
+
     private final int NUMBER_OF_PLAYER_TYPES = 4;
 
     /** Enum for the gamestate, feel free to use. */
@@ -34,7 +38,18 @@ public class Main extends BasicGame {
      */
 
     //0 - off 1 - human 2 - SimpleAI 3 - MapClearAI
-    private int playerType[] = {1,3,0,0};
+	public enum PLAYERTYPE 
+	{
+		OFF, HUMAN, SIMPLE_AI, MAP_CLEAR_AI;
+		private static PLAYERTYPE[] allValues = values();
+    	public static PLAYERTYPE fromOrdinal(int n) {return allValues[n];}
+	}
+
+    private int playerType[] = {
+		PLAYERTYPE.SIMPLE_AI.ordinal(),
+		PLAYERTYPE.MAP_CLEAR_AI.ordinal(),
+		PLAYERTYPE.OFF.ordinal(),
+		PLAYERTYPE.OFF.ordinal()};
     
 //    private GenericAI aiArr[] = {null, null, null, null };
     private HashMap<Player, GenericAI> aiMap; 
@@ -85,19 +100,22 @@ public class Main extends BasicGame {
     
     public Map theMap;
 
+	public static Benchmark benchmark;
+
     public Main() {
         //Changed from jbomber to avoid confusion with other projects.
         //Will most likely redo title graphic to reflect this change in an
         //upcoming revision.
         super("My Bomber");
     }
-    
+
+
     public static void main(String[] arguments) {
         try {
             AppGameContainer app = new AppGameContainer(new Main());
             app.setDisplayMode(640, 480, false);
             app.setShowFPS(false);
-            app.setTargetFrameRate(75);
+            app.setTargetFrameRate(benchmark == null ? 75 : 9999999);
             app.setVSync(false);
             app.setFullscreen(false);
             app.start();
@@ -172,6 +190,11 @@ public class Main extends BasicGame {
     {
         if (gameState == 0) {
             checkInputMenu(container);
+			if (benchmark != null)
+			{
+				gameState = GAMESTATE.RUNNING.ordinal();
+				newRound(playerType);
+			}
         }
         if (gameState == 1) {
             checkInputGame(container);
@@ -201,6 +224,8 @@ public class Main extends BasicGame {
      */
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException {
+		if (benchmark != null)
+			return;
         if (gameState == 0) {
             drawMenuBackground(g);
             drawMenuButtons(g);
@@ -439,7 +464,9 @@ public class Main extends BasicGame {
     }
 
     // initialize board
-    private void newRound(int[] playerType) {        
+    private void newRound(int[] playerType)
+	{
+		System.out.println("newRound called");
         theMap = new Map(this);
 
         //Place Players
@@ -892,7 +919,8 @@ public class Main extends BasicGame {
                     {
                         if ( ! explosion.playing())
                         {
-                            explosion.play();
+							if (!MUTE_SOUND)
+								explosion.play();
                         }
                         makeExplosion(x, y, theMap.bombs[x][y].getSize(),
                         theMap.bombs[x][y].getDirections()[0],
@@ -934,7 +962,12 @@ public class Main extends BasicGame {
                             players[i - 1].setAlive(false);
                             theMap.players[x][y] = 0;
                             if (getPlayersAliveCount() <= 1)
+							{
+								if (benchmark != null)
+									benchmark.gameOver(
+										getFirstLivingPlayer());
                                 gameState = GAMESTATE.MENU.ordinal();
+							}
                         }
                     }
                 }
@@ -951,6 +984,16 @@ public class Main extends BasicGame {
                 c++;
         return c;
     }
+
+	/** Returns the first player instance that is still alive or null
+	* otherwise */
+	public Player getFirstLivingPlayer()
+	{
+        for (Player p : players)
+            if (p.getAlive())
+				return p;
+		return null;
+	}
 
     private void checkPlayer(Player player) {
         if (player.getAlive()) {
@@ -1047,8 +1090,12 @@ public class Main extends BasicGame {
 
     public Input getInput() { return input; }
 
-    public void playSound(String sound) {
-        if (sound.equals("bombup")) { bombup.play(); }
-        if (sound.equals("fireup")) { fireup.play(); }
+    public void playSound(String sound) 
+	{
+		if (!MUTE_SOUND)
+		{
+			if (sound.equals("bombup")) { bombup.play(); }
+			if (sound.equals("fireup")) { fireup.play(); }
+		}
     }
 }
