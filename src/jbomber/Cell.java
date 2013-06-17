@@ -10,25 +10,29 @@ public class Cell {
         this.y = y;
     }
     
-    public HashSet<Cell> getNeighbors(Map m) {
+    public HashSet<Cell> getNeighbors(Map m, int num) {
         HashSet<Cell> ret = new HashSet<Cell>();
         if (this.x + 1 < m.WIDTH) {
-            if (m.board[x+1][y] != m.BLOCKED && m.board[x+1][y] != m.OBSTACLE) {
+            if (m.board[x+1][y] != m.BLOCKED && m.board[x+1][y] != m.OBSTACLE &&
+                (m.players[x+1][y] == num|| m.players[x+1][y] == 0)) {
                 ret.add(new Cell(x+1, y));
             }
         }
         if (this.x - 1 > 0) {
-            if (m.board[x-1][y] != m.BLOCKED && m.board[x-1][y] != m.OBSTACLE) {
+            if (m.board[x-1][y] != m.BLOCKED && m.board[x-1][y] != m.OBSTACLE &&
+                (m.players[x-1][y] == num || m.players[x-1][y] == 0)) {
                 ret.add(new Cell(x-1, y));
             }
         }        
         if (this.y + 1 < m.HEIGHT) {
-            if (m.board[x][y+1] != m.BLOCKED && m.board[x][y+1] != m.OBSTACLE) {
+            if (m.board[x][y+1] != m.BLOCKED && m.board[x][y+1] != m.OBSTACLE && 
+                (m.players[x][y+1] == num || m.players[x][y+1] == 0)) {
                 ret.add(new Cell(x, y+1));
             }
         }
         if (this.y - 1 > 0) {
-            if (m.board[x][y-1] != m.BLOCKED && m.board[x][y-1] != m.OBSTACLE) {
+            if (m.board[x][y-1] != m.BLOCKED && m.board[x][y-1] != m.OBSTACLE && 
+                (m.players[x][y-1] == num || m.players[x][y-1] == 0)) {
                 ret.add(new Cell(x, y-1));
             }
         }        

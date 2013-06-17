@@ -8,13 +8,17 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 
 public class MapClearAI extends GenericAI {
 
+    public static final int FIRE_NEEDED = 5;
+    public static final int BOMBS_NEEDED = 5;
     public MapClearAI (Main main, Player player)
     {
         super(main, player);
     }
 
     @Override
-    public void updateAI() {       
+    public void updateAI() 
+    {
+        boolean powerupsNeeded = player.getBombAmt() < BOMBS_NEEDED || player.getFirePower() < FIRE_NEEDED;
         Path path;
         // It is of utmost importance to get a powerup
         if (map.isPositionSafe(player.getX(), player.getY())) 
@@ -30,8 +34,14 @@ public class MapClearAI extends GenericAI {
                 //if(player.getBombAmt() > 0)
                 //{
                     // Get the path
-                path = findClosestObstacle();
-                //}
+                if(powerupsNeeded)
+                    path = findClosestObstacle();
+                else
+                {
+                    path = findClosestOpponent();
+                    if (isReachable(path)) 
+                        attackEnemy(path);
+                }
                 // If we cannot blow up stuff, and we can not get powerups, we
                 // should just get to safety.
                 if(path == null 
@@ -39,34 +49,23 @@ public class MapClearAI extends GenericAI {
                     path.getStep(1).getY()))
                 {      
                     // just wait!
-                    //path = findClosestSafeSpot();
-                    System.out.println("Doing nothing");
                     return;
                 }
-                else
-                    System.out.println("going for bombing");
             }
-            else
-                System.out.println("going for powerup");
         }
         else
         {
             // Just try to get to safety!
             path = findClosestSafeSpot();
-            System.out.println("going for safety");
         }
-
-
         if (path == null)
         {
-            System.out.println("No path found");
             return;
         }
         // Get first step of chosen path
         Step st = path.getStep(1);
         // There should be a path 
         if (st == null) {
-            System.out.println("No path to anywhere found");
             return;
         }
         takeStep(st, main);

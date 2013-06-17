@@ -22,7 +22,7 @@ public class SimpleAI extends GenericAI {
             takeStep(safe.getStep(1), main);
         }
         else {
-            Path op = findClosestOponent();
+            Path op = findClosestOpponent();
             Path po = findClosestPowerUp();
 
             if (isReachable(op)) {
@@ -77,20 +77,4 @@ public class SimpleAI extends GenericAI {
         return path;
     }
 
-    /**
-     * Sees if the targeted opponent is within hitting range and attacks if so.
-     * @param op Path to the target.
-     */
-    private void attackEnemy(Path toOp) {
-        int opX = toOp.getStep(toOp.getLength() - 1).getX();
-        int opY = toOp.getStep(toOp.getLength() - 1).getY();
-        if (this.player.getX() == opX || this.player.getY() == opY) {
-            // in the same row or column
-            if (toOp.getLength() <= this.player.getFirePower() + 1) {
-                // and is reachable
-                this.player.placeBomb(map);
-//                System.out.println("Player #"+player.getPID()+" will attack block ["+opX+", "+opY+"]");
-            }
-        }
-    }
 }

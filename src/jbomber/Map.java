@@ -183,7 +183,7 @@ public class Map implements TileBasedMap {
         if (bombs[x][y]!= null || hasFire(x,y)) { return false; }
         while (upFlag || downFlag || leftFlag || rightFlag) {
             if (upFlag) {
-                if (x+offset == WIDTH) { upFlag = false; break; }
+                if (x+offset == WIDTH) { upFlag = false; continue; }
                 if (this.board[x+offset][y] == OBSTACLE) { upFlag = false; }
                 else {
                     if (this.bombs[x+offset][y] != null) {
@@ -193,7 +193,7 @@ public class Map implements TileBasedMap {
                 }
             } 
             if (downFlag) {
-                if (x-offset == -1) { downFlag = false; break; }
+                if (x-offset == -1) { downFlag = false; continue; }
                 if (this.board[x-offset][y] == OBSTACLE) { downFlag = false; }
                 else {
                     if (this.bombs[x-offset][y] != null) {
@@ -203,7 +203,7 @@ public class Map implements TileBasedMap {
                 }
             }
             if (leftFlag) {
-                if (y+offset == HEIGHT) { leftFlag = false; break; }
+                if (y+offset == HEIGHT) { leftFlag = false; continue; }
                 if (this.board[x][y+offset] == OBSTACLE) { leftFlag = false; }
                 else {
                     if (this.bombs[x][y+offset] != null) {
@@ -213,7 +213,7 @@ public class Map implements TileBasedMap {
                 }
             }
             if (rightFlag) {                
-                if (y-offset == -1) { rightFlag = false; break; }
+                if (y-offset == -1) { rightFlag = false; continue; }
                 if (this.board[x][y-offset] == OBSTACLE) { rightFlag = false; }
                 else {
                     if (this.bombs[x][y-offset] != null) {

@@ -39,7 +39,7 @@ public abstract class GenericAI {
         }        
     }
 
-    protected Path findClosestOponent() {
+    protected Path findClosestOpponent() {
         finder = new AStarPathFinder(map, 500, false);
         Path path = null;
         
@@ -126,7 +126,7 @@ public abstract class GenericAI {
         HashSet<Cell> tmp = new HashSet<Cell>();
         for (Cell cell : s) {
             tmp.add(cell);
-            tmp.addAll(cell.getNeighbors(map));
+            tmp.addAll(cell.getNeighbors(map, player.getPID()));
         }
         s.addAll(tmp);
         return s;
@@ -140,6 +140,23 @@ public abstract class GenericAI {
         }
         s.addAll(tmp);
         return s;
+    }
+
+    /**
+     * Sees if the targeted opponent is within hitting range and attacks if so.
+     * @param op Path to the target.
+     */
+    protected void attackEnemy(Path toOp) {
+        int opX = toOp.getStep(toOp.getLength() - 1).getX();
+        int opY = toOp.getStep(toOp.getLength() - 1).getY();
+        if (this.player.getX() == opX || this.player.getY() == opY) {
+            // in the same row or column
+            if (toOp.getLength() <= this.player.getFirePower() + 1) {
+                // and is reachable
+                this.player.placeBomb(map);
+//                System.out.println("Player #"+player.getPID()+" will attack block ["+opX+", "+opY+"]");
+            }
+        }
     }
 
     public abstract void updateAI();
