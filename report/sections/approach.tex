@@ -1,0 +1,11 @@
+%\subsection{ Our project setup}
+For this project we made use of an already existing implementation of the game platform in Java\footnote{The source for the existing implementation: \url{https://code.google.com/p/javabomber/}}. This game was mostly multiplayer oriented, it did have an AI implementation which was however, too simplistic.
+Initially we made some alterations to the given project in order to organize the source code in a way that makes more sense. Some of the steps we took in favor of refactoring the code were the following:
+\begin{itemize}
+\item Pulled up a ‘Map’ class. This enabled us to organize the path finding algorithms we used in robust fashion.
+\item Created a ‘GenericAI’ abstract class containing important member methods and variables. Here are the methods that are used by all AI implementations. This class is extended by any AI implementations we made.
+\item Created a ‘Cell’ class  representative of a cell of the Map.
+
+The rest of the classes that exist in the project are as follows:
+\todo{missing end here?}
+
