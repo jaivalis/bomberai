@@ -34,7 +34,7 @@ public class Main extends BasicGame {
      */
 
     //0 - off 1 - human 2 - SimpleAI 3 - MapClearAI
-    private int playerType[] = {1,2,3,0};
+    private int playerType[] = {1,3,0,0};
     
 //    private GenericAI aiArr[] = {null, null, null, null };
     private HashMap<Player, GenericAI> aiMap; 
@@ -45,6 +45,7 @@ public class Main extends BasicGame {
     private int bgX = 0;
     private int bgY = 0;
     private Image playButton;
+    private Image winnerImage;
     private Image optionsButton;
     private Image quitButton;
     private Image backButton;
@@ -119,6 +120,7 @@ public class Main extends BasicGame {
         //Menu Graphics Loading
         title = new Image("data/menu/title.png");
         playButton = new Image("data/menu/button_play.png");
+        winnerImage = new Image("data/menu/winner.png");
         optionsButton = new Image("data/menu/button_options.png");
         quitButton = new Image("data/menu/button_quit.png");
         backButton = new Image("data/menu/button_back.png");
@@ -202,6 +204,8 @@ public class Main extends BasicGame {
         if (gameState == 0) {
             drawMenuBackground(g);
             drawMenuButtons(g);
+            // If a winner is known
+            drawWinner(g);
             g.drawImage(title, 50, 0);
         }
         if (gameState == 1) {
@@ -364,6 +368,35 @@ public class Main extends BasicGame {
         }
     }
 
+    private void drawWinner(Graphics g)
+    {
+        if(players != null && getPlayersAliveCount() > 0)
+        {
+            g.drawImage(winnerImage, 50, 155);
+            for(Player player : players)
+            {
+                if(player.getAlive())
+                {
+                    // Draw player and break
+                    tileset.getSprite(1, 1).draw(90, 210, 2.0f);
+                    switch (player.getPID())
+                    {
+                        case 2: 
+                            tileset.getSprite(0, 1).draw(90, 210, 2.0f, new Color(50, 50, 50));
+                        break;
+                        case 3:
+                            tileset.getSprite(0, 1).draw(90, 210, 2.0f, new Color(255, 50, 50));
+                        break;
+                        case 4: 
+                            tileset.getSprite(0, 1).draw(90, 210, 2.0f, new Color(50, 50, 255));
+                        break;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
     private void drawMenuButtons(Graphics g)
     {
         if (changingOptions)
@@ -417,7 +450,7 @@ public class Main extends BasicGame {
 
         players = new Player[4];
         players[0] = whiteBomber;
-        players[1] = blackBomber;
+        players[1] = blackBomber;               
         players[2] = redBomber;
         players[3] = blueBomber;
 
@@ -909,13 +942,13 @@ public class Main extends BasicGame {
         }
     }
 
-    /** Returns true if all pleyers are dead, false otherwise. */
+    /** Returns the number of players that are alive. */
     public int getPlayersAliveCount()
     {
         int c = 0;
         for (Player p : players)
             if (p.getAlive())
-                c ++;
+                c++;
         return c;
     }
 

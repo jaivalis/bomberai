@@ -22,10 +22,10 @@ public class SimpleAI extends GenericAI {
             takeStep(safe.getStep(1), main);
         }
         else {
-            Path op = super.findClosestOponent();
+            Path op = findClosestOponent();
             Path po = findClosestPowerUp();
 
-            if (isEnemyReachable(op)) {
+            if (isReachable(op)) {
                 // attack enemy                    
                 attackEnemy(op);
             } else {                    

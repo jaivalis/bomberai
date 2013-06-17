@@ -14,7 +14,7 @@ public class Map implements TileBasedMap {
     public final int OBSTACLE = 2;
 
     /** Value for cost calculation in A* */
-    public final int OBSTACLE_COST = 40;
+    public final int OBSTACLE_COST = 4;
 
     /** The width in grid cells of our map */
     public final int WIDTH = 19;

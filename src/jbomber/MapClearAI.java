@@ -15,42 +15,48 @@ public class MapClearAI extends GenericAI {
 
     @Override
     public void updateAI() {       
-        // At first: get us to safety when standing on a bomb.
-        if (!map.isPositionSafe(player.getX(), player.getY())) {
-            // unsafe, must move away
-            Path safe = findClosestSafeSpot();
-            
-            if (safe == null) { return; } // I have accepted my fate.
-            takeStep(safe.getStep(1), main);
-        }
+        Path path;
         // It is of utmost importance to get a powerup
-        Path path = findClosestPowerUp();
-        if(path == null 
-            || !map.isPositionSafe(path.getStep(1).getX(),
-            path.getStep(1).getY()))
+        if (map.isPositionSafe(player.getX(), player.getY())) 
         {
-            // If we have bombs, and no powerups are near, blow up some
-            // obstacles!
-            if(player.getBombAmt() > 0)
-            {
-                // Get the path
-                path = findClosestObstacle();
-            }
-            // If we cannot blow up stuff, and we can not get powerups, we
-            // should just get to safety.
+            path = findClosestPowerUp();
             if(path == null 
+                || !isReachable(path) 
                 || !map.isPositionSafe(path.getStep(1).getX(),
-                path.getStep(1).getY()))
-            {       
-                // Just try to get to safety!
-                path = findClosestSafeSpot();
-                System.out.println("going for safety");
+                    path.getStep(1).getY()))
+            {
+                // If we have bombs, and no powerups are near, blow up some
+                // obstacles!
+                //if(player.getBombAmt() > 0)
+                //{
+                    // Get the path
+                path = findClosestObstacle();
+                //}
+                // If we cannot blow up stuff, and we can not get powerups, we
+                // should just get to safety.
+                if(path == null 
+                    || !map.isPositionSafe(path.getStep(1).getX(),
+                    path.getStep(1).getY()))
+                {      
+                    // just wait!
+                    //path = findClosestSafeSpot();
+                    System.out.println("Doing nothing");
+                    return;
+                }
+                else
+                    System.out.println("going for bombing");
             }
             else
-                System.out.println("going for bombing");
+                System.out.println("going for powerup");
         }
         else
-            System.out.println("going for powerup");
+        {
+            // Just try to get to safety!
+            path = findClosestSafeSpot();
+            System.out.println("going for safety");
+        }
+
+
         if (path == null)
         {
             System.out.println("No path found");

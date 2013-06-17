@@ -112,7 +112,7 @@ public abstract class GenericAI {
         }
     }
     
-    protected boolean isEnemyReachable(Path p) {
+    protected boolean isReachable(Path p) {
         if (p == null) { return false; }
         for (int i = 0; i < p.getLength(); i++) {
             if (map.board[p.getX(i)][p.getY(i)] == map.OBSTACLE) {
