@@ -13,6 +13,9 @@ public class Map implements TileBasedMap {
     public final int BLOCKED = 1;
     public final int OBSTACLE = 2;
 
+    /** Value for cost calculation in A* */
+    public final int OBSTACLE_COST = 40;
+
     /** The width in grid cells of our map */
     public final int WIDTH = 19;
     public final int HEIGHT = 15;
@@ -31,10 +34,10 @@ public class Map implements TileBasedMap {
 
     private TiledMap map;
     public Map(Main main) {
-        board   = new int[19][15];
-        players = new int[19][15];
-        bombs   = new Bomb[19][15];
-        fire    = new Fire[19][15];
+        board   = new int[WIDTH][HEIGHT];
+        players = new int[WIDTH][HEIGHT];
+        bombs   = new Bomb[WIDTH][HEIGHT];
+        fire    = new Fire[WIDTH][HEIGHT];
         
         this.jitterX = main.jitterX;
         this.jitterY = main.jitterY;
@@ -113,12 +116,10 @@ public class Map implements TileBasedMap {
      */
     @Override
     public float getCost(PathFindingContext pfc, int x, int y) {        
-        if (board[(int) x][(int) y] == OBSTACLE) { return 3; }
+        if (hasObstacle(x, y)) { return OBSTACLE_COST; }
         else { return 1; }
     }
 
-    
-    
     public boolean hasObstacle(int x, int y) {
         return board[x][y] == OBSTACLE;
     }
@@ -167,6 +168,8 @@ public class Map implements TileBasedMap {
             }
         }
     }
+    
+    /************************    /Drawing Functions     ************************/
 
     /**
      * Returns if the players position is in bomb range.
@@ -224,8 +227,7 @@ public class Map implements TileBasedMap {
         return true;
     }
 
-    private boolean hasFire(int x, int y) {
-//        System.out.println("? " + fire[x][y]!=null);
+    public boolean hasFire(int x, int y) {
         return fire[x][y]!=null;
     }
     

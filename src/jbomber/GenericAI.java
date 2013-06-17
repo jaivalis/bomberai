@@ -106,17 +106,19 @@ public abstract class GenericAI {
             player.placeBomb(map);
         }
         else { // move regularly
-            player.move(s.getX() - this.player.getX(), s.getY() - this.player.getY(), m);
+            if (!m.theMap.hasFire(s.getX(), s.getY())) {
+                player.move(s.getX() - this.player.getX(), s.getY() - this.player.getY(), m);
+            }
         }
     }
     
     protected boolean isEnemyReachable(Path p) {
         if (p == null) { return false; }
         for (int i = 0; i < p.getLength(); i++) {
-            if (map.board[p.getX(i)][p.getY(i)] != map.OBSTACLE) {
+            if (map.board[p.getX(i)][p.getY(i)] == map.OBSTACLE) {
                 return false;
             }
-        }        
+        }
         return true;        
     }
     
@@ -130,6 +132,15 @@ public abstract class GenericAI {
         return s;
     }
 
+    protected HashSet<Cell> expandNeighborsIncludingObstacle(HashSet<Cell> s) {
+        HashSet<Cell> tmp = new HashSet<Cell>();
+        for (Cell cell : s) {
+            tmp.add(cell);
+            tmp.addAll(cell.getNeighborsIncludingObstacle(map));
+        }
+        s.addAll(tmp);
+        return s;
+    }
 
     public abstract void updateAI();
 }

@@ -15,6 +15,7 @@ public class MapClearAI extends GenericAI {
 
     @Override
     public void updateAI() {       
+        // At first: get us to safety when standing on a bomb.
         if (!map.isPositionSafe(player.getX(), player.getY())) {
             // unsafe, must move away
             Path safe = findClosestSafeSpot();
@@ -22,26 +23,47 @@ public class MapClearAI extends GenericAI {
             if (safe == null) { return; } // I have accepted my fate.
             takeStep(safe.getStep(1), main);
         }
-        else {
-            // safe, time to think
-            // Get the path to the closest obstacle to destroy
-            Path obstacle = findClosestObstacle();
-            // check for null:
-            if(obstacle == null)
-                return;
-            // Get the first step to that path
-            Step st = obstacle.getStep(1);
-            // There should be a path 
-            if (st == null) {
-                System.out.println("NO STEP FOUND!?");
-                return;
+        // It is of utmost importance to get a powerup
+        Path path = findClosestPowerUp();
+        if(path == null 
+            || !map.isPositionSafe(path.getStep(1).getX(),
+            path.getStep(1).getY()))
+        {
+            // If we have bombs, and no powerups are near, blow up some
+            // obstacles!
+            if(player.getBombAmt() > 0)
+            {
+                // Get the path
+                path = findClosestObstacle();
             }
-            if ( map.isPositionSafe(st.getX(), st.getY()) ) {
-                takeStep(st, main);
+            // If we cannot blow up stuff, and we can not get powerups, we
+            // should just get to safety.
+            if(path == null 
+                || !map.isPositionSafe(path.getStep(1).getX(),
+                path.getStep(1).getY()))
+            {       
+                // Just try to get to safety!
+                path = findClosestSafeSpot();
+                System.out.println("going for safety");
             }
-            else 
-                System.out.println("unsafe path, not taking step");
+            else
+                System.out.println("going for bombing");
         }
+        else
+            System.out.println("going for powerup");
+        if (path == null)
+        {
+            System.out.println("No path found");
+            return;
+        }
+        // Get first step of chosen path
+        Step st = path.getStep(1);
+        // There should be a path 
+        if (st == null) {
+            System.out.println("No path to anywhere found");
+            return;
+        }
+        takeStep(st, main);
     }
     
     private Path findClosestObstacle()
@@ -62,12 +84,12 @@ public class MapClearAI extends GenericAI {
         cells.add(new Cell(x,y));
         while (distance != 0) {
             //expand `distance` times
-            cells = expandNeighbors(cells);
+            cells = expandNeighborsIncludingObstacle(cells);
             distance--;
         }
         for (Cell c : cells) {
             if (map.hasObstacle(c.x, c.y)) {
-                System.out.printf("found obstacle at %d, %d\n", c.x, c.y);
+                //System.out.printf("found obstacle at %d, %d\n", c.x, c.y);
                 Path path = finder.findPath(new EnemyMover(this.player.getColor().toString()),
                     this.player.getX(), this.player.getY(), c.x, c.y);
                 return path;

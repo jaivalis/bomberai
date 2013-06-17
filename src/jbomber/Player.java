@@ -37,6 +37,8 @@ public class Player {
 
     private boolean[] moving;
 
+    private int type;
+
     Player(int x, int y, int number, Color color, int type)
     {
         this.x = x;
@@ -46,13 +48,14 @@ public class Player {
         this.pid = number;
         this.clock = 0;
         this.color = color;
+        this.type = type;
         if (type == 1)
         {
             this.alive = true;
             this.human = true;
             this.deathClock = 100;
         }
-        if (type == 2)
+        if (type == 2 || type == 3)
         {
             this.alive = true;
             this.human = false;
@@ -518,5 +521,10 @@ public class Player {
     public int getPatience()
     {
         return patience;
+    }
+    
+    public int getType()
+    {
+        return this.type;
     }
 }

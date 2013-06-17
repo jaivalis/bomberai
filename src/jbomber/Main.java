@@ -17,6 +17,7 @@ import org.newdawn.slick.geom.Rectangle;
 public class Main extends BasicGame {
 
     private final boolean musicOn = false;
+    private final int NUMBER_OF_PLAYER_TYPES = 4;
 
     /** Enum for the gamestate, feel free to use. */
     public enum GAMESTATE { MENU, RUNNING, MATCH_RESULTS }
@@ -32,8 +33,8 @@ public class Main extends BasicGame {
      *  2 - Match Results
      */
 
-    //0 - off 1 - human 2 - CPU
-    private int playerType[] = {1,2,0,0};
+    //0 - off 1 - human 2 - SimpleAI 3 - MapClearAI
+    private int playerType[] = {1,2,3,0};
     
 //    private GenericAI aiArr[] = {null, null, null, null };
     private HashMap<Player, GenericAI> aiMap; 
@@ -48,10 +49,11 @@ public class Main extends BasicGame {
     private Image quitButton;
     private Image backButton;
     private Image title;
-    private Image cpuCap, humCap, offCap;
+    private Image cpuCap1, cpuCap2, humCap, offCap;
     private int menuMouseX, menuMouseY;
     private Rectangle play, options, quit, back;
-    private Rectangle p1, p2, p3, p4;
+    //private Rectangle p1, p2, p3, p4;
+    private Rectangle[] playerRects = new Rectangle[4];
 
     //Effects Resources
     private Image fog;
@@ -122,7 +124,8 @@ public class Main extends BasicGame {
         backButton = new Image("data/menu/button_back.png");
         bgSmall = new Image("data/menu/background_small.png");
         bgBig = new Image("data/menu/background_big.png");
-        cpuCap = new Image("data/menu/cpu_caption.png");
+        cpuCap1 = new Image("data/menu/cpu_caption1.png");
+        cpuCap2 = new Image("data/menu/cpu_caption2.png");
         humCap = new Image("data/menu/human_caption.png");
         offCap = new Image("data/menu/off_caption.png");
 
@@ -146,10 +149,11 @@ public class Main extends BasicGame {
         options = new Rectangle(200, 240, optionsButton.getWidth(), optionsButton.getHeight());
         quit = new Rectangle(200, 340, quitButton.getWidth(), quitButton.getHeight());
         back = new Rectangle(200, 340, backButton.getWidth(), backButton.getHeight());
-        p1 = new Rectangle(130, 220, 100, 50);
-        p2 = new Rectangle(230, 220, 100, 50);
-        p3 = new Rectangle(330, 220, 100, 50);
-        p4 = new Rectangle(430, 220, 100, 50);
+
+        playerRects[0] = new Rectangle(130, 220, 100, 50);
+        playerRects[1] = new Rectangle(230, 220, 100, 50);
+        playerRects[2] = new Rectangle(330, 220, 100, 50);
+        playerRects[3] = new Rectangle(430, 220, 100, 50);
         
         //Music Loading
         if (musicOn) {
@@ -269,36 +273,12 @@ public class Main extends BasicGame {
                         changingOptions = false;
                     }
                 }
-                if (mouseClicker.intersects(p1))
+                for (int i=0 ;i<4; i++)
                 {
-                    playerType[0] += 1;
-                    if (playerType[0] == 3)
+                    if(mouseClicker.intersects(playerRects[i]))
                     {
-                        playerType[0] = 0;
-                    }
-                }
-                if (mouseClicker.intersects(p2))
-                {
-                    playerType[1] += 1;
-                    if (playerType[1] == 3)
-                    {
-                        playerType[1] = 0;
-                    }
-                }
-                if (mouseClicker.intersects(p3))
-                {
-                    playerType[2] += 1;
-                    if (playerType[2] == 3)
-                    {
-                        playerType[2] = 0;
-                    }
-                }
-                if (mouseClicker.intersects(p4))
-                {
-                    playerType[3] += 1;
-                    if (playerType[3] == 3)
-                    {
-                        playerType[3] = 0;
+                        // Increment and maybe reset player type
+                        playerType[i] = ++playerType[i] % NUMBER_OF_PLAYER_TYPES;
                     }
                 }
             }
@@ -405,7 +385,11 @@ public class Main extends BasicGame {
                 }
                 if (playerType[humanCheck] == 2)
                 {
-                    g.drawImage(cpuCap, humanCheck * 100 + 130, 200);
+                    g.drawImage(cpuCap1, humanCheck * 100 + 130, 200);
+                }
+                if (playerType[humanCheck] == 3)
+                {
+                    g.drawImage(cpuCap2, humanCheck * 100 + 130, 200);
                 }
                 if (playerType[humanCheck] == 0)
                 {
@@ -437,9 +421,21 @@ public class Main extends BasicGame {
         players[2] = redBomber;
         players[3] = blueBomber;
 
-        aiMap.put(blackBomber, new MapClearAI(this, blackBomber));
-        aiMap.put(redBomber, new SimpleAI(this, redBomber));
-        aiMap.put(blueBomber, new SimpleAI(this, blueBomber));
+        // TODO: A menu should be added to choose AI-types
+        for (Player player : players)
+        {
+            // Type 2 is SimpleAI
+            if(player.getType() == 2)
+                aiMap.put(player, new SimpleAI(this, player));
+            // Type 3 is MapClearAI
+            else if (player.getType() == 3)
+                aiMap.put(player, new MapClearAI(this, player));
+        }
+
+        // aiMap.put(whiteBomber, new SimpleAI(this, whiteBomber));
+        // aiMap.put(blackBomber, new SimpleAI(this, blackBomber));
+        // aiMap.put(redBomber, new SimpleAI(this, redBomber));
+        // aiMap.put(blueBomber, new SimpleAI(this, blueBomber));
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
