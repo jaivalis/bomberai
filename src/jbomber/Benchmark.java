@@ -32,6 +32,14 @@ public class Benchmark
 		Main.main(args);
 	}
 
+	public void gameOver(int winnerTypeId)
+	{
+		count[winnerTypeId] += 1;
+		numberOfMarks --;
+		if (numberOfMarks == 0)
+			exit();
+	}
+
 	public void gameOver(Player winner)
 	{
 		count[winner.type] += 1;

@@ -21,6 +21,8 @@ public class Main extends BasicGame {
 	// Do not forget to set this to false before we turn this in
     private final boolean MUTE_SOUND = true;
 
+    private final int TIME_MAX = 10000;
+
     private final int NUMBER_OF_PLAYER_TYPES = 4;
 
     /** Enum for the gamestate, feel free to use. */
@@ -97,6 +99,8 @@ public class Main extends BasicGame {
     
     private Input input;
     private boolean changingOptions = false;
+
+    private int time;
     
     public Map theMap;
 
@@ -197,6 +201,13 @@ public class Main extends BasicGame {
 			}
         }
         if (gameState == 1) {
+            if(++time > TIME_MAX)
+            {
+                System.out.println("Time is up, round ended as draw");
+                if (benchmark != null)
+                    benchmark.gameOver(0);
+                gameState = GAMESTATE.MENU.ordinal();
+            }
             checkInputGame(container);
             //Check on all the bombs
             checkBombs();
@@ -468,6 +479,9 @@ public class Main extends BasicGame {
 	{
 		System.out.println("newRound called");
         theMap = new Map(this);
+
+        // reset the time
+        time = 0;
 
         //Place Players
         whiteBomber = new Player(1, 1, 1, Color.white, playerType[0]);

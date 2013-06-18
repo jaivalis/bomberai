@@ -142,6 +142,16 @@ public abstract class GenericAI {
         return s;
     }
 
+    protected HashSet<Cell> expandSafePathNeighborsIncludingObstacle(HashSet<Cell> s) {
+        HashSet<Cell> tmp = new HashSet<Cell>();
+        for (Cell cell : s) {
+            tmp.add(cell);
+            tmp.addAll(cell.getNeighborsSafePathIncludingObstacle(map));
+        }
+        s.addAll(tmp);
+        return s;
+    }
+
     /**
      * Sees if the targeted opponent is within hitting range and attacks if so.
      * @param op Path to the target.

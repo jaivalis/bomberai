@@ -8,8 +8,8 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 
 public class MapClearAI extends GenericAI {
 
-    public static final int FIRE_NEEDED = 5;
-    public static final int BOMBS_NEEDED = 5;
+    public static final int FIRE_NEEDED = 4;
+    public static final int BOMBS_NEEDED = 3;
     public MapClearAI (Main main, Player player)
     {
         super(main, player);
@@ -77,7 +77,7 @@ public class MapClearAI extends GenericAI {
         int distance = 1;
         while ( (path = findObstacle(distance, this.player.getX(), this.player.getY())) == null) {
             distance++;
-            if (distance > 9) { return null; } // accept your faith.
+            if (distance > 20) { return null; } // accept your faith.
         }
         return path;
 
@@ -89,7 +89,7 @@ public class MapClearAI extends GenericAI {
         cells.add(new Cell(x,y));
         while (distance != 0) {
             //expand `distance` times
-            cells = expandNeighborsIncludingObstacle(cells);
+            cells = expandSafePathNeighborsIncludingObstacle(cells);
             distance--;
         }
         for (Cell c : cells) {

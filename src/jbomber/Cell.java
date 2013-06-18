@@ -42,7 +42,32 @@ public class Cell {
     public HashSet<Cell> getNeighborsIncludingObstacle(Map m) {
         HashSet<Cell> ret = new HashSet<Cell>();
         if (this.x + 1 < m.WIDTH) {
-            if (m.board[x+1][y] != m.BLOCKED) {
+            if (m.board[x+1][y] != m.BLOCKED && m.isPositionSafe(x+1, y)) {
+                ret.add(new Cell(x+1, y));
+            }
+        }
+        if (this.x - 1 > 0) {
+            if (m.board[x-1][y] != m.BLOCKED && m.isPositionSafe(x-1, y)) {
+                ret.add(new Cell(x-1, y));
+            }
+        }        
+        if (this.y + 1 < m.HEIGHT) {
+            if (m.board[x][y+1] != m.BLOCKED && m.isPositionSafe(x, y+1)) {
+                ret.add(new Cell(x, y+1));
+            }
+        }
+        if (this.y - 1 > 0) {
+            if (m.board[x][y-1] != m.BLOCKED && m.isPositionSafe(x, y-1)) {
+                ret.add(new Cell(x, y-1));
+            }
+        }        
+        return ret;
+    }
+
+    public HashSet<Cell> getNeighborsSafePathIncludingObstacle(Map m) {
+        HashSet<Cell> ret = new HashSet<Cell>();
+        if (this.x + 1 < m.WIDTH) {
+            if (m.board[x+1][y] != m.BLOCKED ) {
                 ret.add(new Cell(x+1, y));
             }
         }

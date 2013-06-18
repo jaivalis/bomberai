@@ -1,10 +1,55 @@
 \subsection{Kill-First-AI}
 We thought of various ways to implement AI agents for the game. Our final AI implementation is based on the decision tree model. The logic behind the implementation is illustrated in Figure \ref{fig:tree1}.
 
+\tikzset{
+    every node/.style={
+        font=\scriptsize
+    },
+    decision/.style={
+        shape=rectangle,
+        minimum height=1cm,
+        text width=2cm,
+        text centered,
+        rounded corners=1ex,
+        draw,
+        label={[yshift=0.125cm]left:yes},
+        label={[yshift=0.125cm]right:no},
+    },
+    outcome/.style={
+        shape=ellipse,
+        fill=gray!15,
+        draw,
+        text width=1.5cm,
+        text centered
+    },
+    decision tree/.style={
+        edge from parent path={[-latex] (\tikzparentnode) -| (\tikzchildnode)},
+        %sibling distance=5cm,
+        level distance=2cm
+    }
+}
+\tikzset{level 1/.style={sibling distance=6cm}}
+\tikzset{level 2/.style={sibling distance=3cm}}
+
 \begin{figure}
 \centering
-\includegraphics[width=10cm]{resources/tree1}
-\caption{Decision Tree}
+%\includegraphics[width=10cm]{resources/tree1}
+\begin{tikzpicture}[node distance =0cm, auto]
+\node [decision] {Is current position safe?}
+    [decision tree]
+    child { node [decision] { Is there a reachable enemy? } 
+        child { node [outcome] { attack enemy } }
+        child { node [decision] { Is there a reachable powerup? } 
+            child { node [outcome] { Go to powerup } }
+            child { node [outcome] { Clear path to enemy } }
+        }
+    }
+    child { node [decision] { Is there a safe position nearby?}
+            child { node [outcome] { Go to safe position} }
+            child { node [outcome] { Do nothing} }
+    };
+\end{tikzpicture}
+\caption{Decision Tree for the Kill-First AI}
 \label{fig:tree1}
 \end{figure}
 
@@ -28,4 +73,35 @@ Obviously the empty spaces and walls have trivial scores of 1 and undefined (inf
 Initially the players will have obstacles between them and still would require to calculate the distances between them. The final cost we assigned to the ‘obstacle’ class of map cell finally was 4. We observed some weird behaviours when this score was 3. That is the bots would end up trapped by their bombs after placing them. We assumed that the difference between 3 and 4 is that when the cost is fixed to 4 the bot prefer moving around an obstacle more to blasting through it. That is the reason why it will never try to reach a safe position after placing a bomb by blasting it’s way through another obstacle.
 
 \subsection{Upgrade-First-AI}
+\begin{figure}
+\centering
+%\includegraphics[width=10cm]{resources/tree1}
+\begin{tikzpicture}[node distance =0cm, auto]
+\node [decision] {Is current position safe?}
+    [decision tree]
+    child { node [decision] { Is there a reachable powerup? } 
+        child { node [outcome] { Go to powerup } }
+        child { node [decision] { Are more powerups needed? } 
+            child { node [outcome] { Blow up nearest reachable block} }
+            child { node [decision] { Is an enemy reachable? } 
+                child { node [outcome] { Attack enemy } }
+                child { node [outcome] { Do nothing } }
+            }
+        }
+    }
+    child { node [decision] { Is there a safe position nearby?}
+            child { node [outcome] { Go to safe position} }
+            child { node [outcome] { Do nothing} }
+    };
+\end{tikzpicture}
+\caption{Decision Tree for the Upgrade-first AI}
+\label{fig:treeUpgradeFirst}
+\end{figure}
+As can be seen in figure \ref{treeUpgradeFirst}, this AI has an extension on the
+Kill-First's decision tree. This one aims to get at least 3 bombs and a
+firepower of 4 squares in all directions, before trying to kill the opposing
+forces.
+
+
+
 \todo{Explain this AI here}
