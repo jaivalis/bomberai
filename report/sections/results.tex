@@ -1,1 +1,37 @@
-\todo{insert results here as soon as we have them}
+\begin{table}
+\centering
+\begin{tabular}{l|l}
+\textbf{AI Name} & \textbf{Number of wins}\\\hline
+\textit{Kill-First-AI} & 48 \\
+\textit{Upgrade-First-AI} & 27\\
+\end{tabular}
+\caption{Results of 100 matches between the Kill-First-AI and the
+Upgrade-First-AI. The rest of the results are draws, meaning that the game did
+not end within 10,000 time steps}
+\label{tab:results}
+\end{table}
+
+In order to compare the AI's with each other, a simple benchmark tool was
+created. This tool runs a number of matches and keeps the results of these
+matches. After the competition is done, the number of victories per bot type is
+printed. Table \ref{tab:results} shows the results of a benchmark running 100
+games.
+
+\subsection{Analysis}
+When looking at the results, it can be concluded that the Kill-First-AI works
+better than the Upgrade-First-AI. To find a reason for this result, we can look
+at the individual games of the one versus the other.
+
+The main cause of losing for the Upgrade-First-AI seems to be that most of the
+times, the enemy has already reached it, before it is done `upgrading'. The
+collecting behavior of the bot seems to work a lot worse, when the enemy is
+constantly threatening him with bombs. In many situations the Upgrade-First-AI
+gets himself into trouble by still placing bombs in his neighbourhood, while the
+enemy tries to kill him. This results in the bot having too many bombs in its
+surroundings to escape from, resulting in a lost game. 
+
+In most games where the
+Upgrade-First bot does get enough time to get all the power ups required, it beats the
+opponent.
+
+
