@@ -23,7 +23,6 @@ public abstract class GenericAI {
         players.add(main.blueBomber);
         players.add(main.redBomber);
         players.add(main.whiteBomber);
-        System.out.println("init done");
     }
     
     /**
