@@ -106,7 +106,7 @@ public class Main extends BasicGame {
         //Changed from jbomber to avoid confusion with other projects.
         //Will most likely redo title graphic to reflect this change in an
         //upcoming revision.
-        super("My Bomber");
+        super("Bomber AI");
     }
 
 
