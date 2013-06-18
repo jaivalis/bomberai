@@ -1,11 +1,32 @@
-Can we now honestly advocate one type of strategy over another? Obviously, no.
-
-\todo{Discuss the following stuff in more detail.}
-
+%\begin{document}
+Can we now honestly advocate one type of strategy over another when you play
+Bomberman at home with you friends? Obviously, no.
+First of all, the game in which we researched the strategies differs in some
+ways from regular Bomberman games:
 \begin{itemize}
-\item Things might be different with different upgrades, which other versions of Bomberman clearly do have.
-\item Overall path finding might benefit one AI more than the other
-\item Tweaks in low level behaviour might favor one type of AI
-\item `Normal' Bomberman works differently in regards to collision detection
-\item Different kind of maps might require different kind of strategies
+\item Things might be different with different upgrades. Upgrades which increase
+the speed of the player or which allow the player to `kick' the bombs to different
+locations than they were originally laid down can be more beneficial. This could
+mean that getting such upgrades before going in for the kill could be more
+beneficial.
+\item `Normal' Bomberman works differently in regards to collision detection,
+which allows players passing through each other.
+\item Different kind of maps might require different kind of strategies. In
+original Bomberman games there are additional map features, for example
+teleports or tunnels. This might influence the effect certain strategies have.
+\end{itemize}
+
+In regards to the AI for this game we can conclude that it is better to go in
+for the kill as soon as possible, but there are some factors that we should
+not rule out yet:
+\begin{itemize}
+\item Tweaks in low level behaviour might favor one type of AI more that the
+other. For example, planning to destroy as much block as possible
+(Upgrade-First-AI) is different from destroying those blocks which opens up
+a path to the opponent as quickly as possible (Kill-First-AI). One of the
+methods we implemented might work better, favoring the low level behavior
+of the bots rather than the grand strategy we try to evaluate.
+\item Human players might not be able to utilize all the upgrades. For example,
+the AI might be able to plan to drop 20 bombs on the map, but a human player
+would not be able to more quickly enough.
 \end{itemize}
