@@ -17,7 +17,7 @@ import org.newdawn.slick.geom.Rectangle;
 public class Benchmark
 {
 	private int[] count = {0, 0, 0, 0};
-	private int numberOfMarks = 10;
+	private int numberOfMarks = 1000;
 
 	public static void main (String[] args)
 	{
@@ -42,10 +42,18 @@ public class Benchmark
 
 	public void gameOver(Player winner)
 	{
-		count[winner.type] += 1;
-		numberOfMarks --;
-		if (numberOfMarks == 0)
-			exit();
+        // No winner could be known when everyone is dead, this is counted as a draw
+        if(winner == null)
+        {
+            count[0] += 1;
+        }
+        else
+        {
+            count[winner.type] += 1;
+            numberOfMarks --;
+            if (numberOfMarks == 0)
+                exit();
+        }
 	}
 
 	public void exit()

@@ -208,6 +208,8 @@ public class Main extends BasicGame {
                     benchmark.gameOver(0);
                 gameState = GAMESTATE.MENU.ordinal();
             }
+            if(time % 1000 == 0)
+                System.out.printf("\rTime now is %d", time);
             checkInputGame(container);
             //Check on all the bombs
             checkBombs();
